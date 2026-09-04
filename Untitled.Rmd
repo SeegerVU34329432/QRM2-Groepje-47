@@ -11,7 +11,20 @@ have. How many variables are there? How many subjects? What consists of a subjec
 ```{r}
 movies <- read.delim("movies5.tsv")
 View(movies)
+
+dim(movies)
+nrow(movies)
+ncol(movies)
+
+length(unique(movies$title))
 ```
+Number of observations: 909 observations (rows).
+
+Number of variables: 19 variables (columns).
+
+Number of subjects: 909 subjects.
+
+What consists of a subject: An individual movie (film). Each observation in the dataset corresponds to one distinct film title.
 
 Your Answer:
 Write your response here.

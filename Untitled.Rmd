@@ -52,6 +52,8 @@ Your Answer:
 (iv) A ratio variable is “runtime”, because duration has an absolute zero and ratios are meaningful. For example, a movie lasting 120 minutes is twice as long as a movie lasting 60 minutes. 
 
 
+
+
 3. A movie studio wants to know which types of movies give maximal profit. Perform the following steps
 to provide the movie studio with an analysis which corresponds to their request:
 a. Create the variable profits as the revenue of a movie minus its budget. Report its mean, median,
@@ -79,22 +81,27 @@ Step a
 #WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
+
 Step b
 #WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
+
 Step c
 #WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
+
 Step d
 #WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
+
 Step e
 #WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
+
 Step f
 #WRITE YOUR CODE HERE
 Your Answer:

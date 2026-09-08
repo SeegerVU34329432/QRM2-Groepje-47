@@ -76,34 +76,135 @@ or better by the audience, or does the audience not have a preference? Why do yo
 case? [2 points]
 For each step, you should provide first all the code you used to answer the question and then formulate an
 answer using full sentences.
-2
+
+
 Step a
-#WRITE YOUR CODE HERE
+
+```{r}
+# Read the dataset
+movies <- read.delim("movies5.tsv")
+
+# Create the profits variable
+movies$profits <- movies$revenue - movies$budget
+
+# Calculate the descriptive statistics
+mean(movies$profits)
+median(movies$profits)
+max(movies$profits)
+min(movies$profits)
+```
+
 Your Answer:
-Write your formulated response here.
+
+We calculated profit by subtracting the budget from the revenue. The mean profit is 56,284,649.70, and the median is 2,942,221. The highest profit is 1,082,730,962, and the lowest is −98,301,101. All amounts use the monetary units in the dataset.
 
 Step b
-#WRITE YOUR CODE HERE
+
+```{r}
+# Find the movie with the highest profit
+movies[which.max(movies$profits), c("title", "profits")]
+
+# Find the movie with the lowest profit
+movies[which.min(movies$profits), c("title", "profits")]
+```
+
 Your Answer:
-Write your formulated response here.
+
+“Minions” has the highest profit, earning 1,082,730,962 above its budget. “The 13th Warrior” has the lowest profit, with a loss of 98,301,101.
 
 Step c
-#WRITE YOUR CODE HERE
+
+```{r}
+# Create a boxplot of profits
+boxplot(
+  movies$profits / 1000000,
+  main = "Distribution of Movie Profits",
+  xlab = "Movies",
+  ylab = "Profit (millions of monetary units)",
+  names = "All movies",
+  col = "lightblue"
+)
+
+# Add a reference line at zero profit
+abline(h = 0, col = "red", lty = 2)
+
+# Calculate quartiles, interpreting Q4 as the maximum
+quantile(
+  movies$profits,
+  probs = c(0.25, 0.50, 0.75, 1.00)
+)
+```
+
 Your Answer:
-Write your formulated response here.
+
+Q1 is −1,260,859, Q2 is 2,942,221, and Q3 is 61,340,801. We interpret Q4 as the maximum, which is 1,082,730,962.
+
+The boxplot shows that a few movies make very large profits. These movies pull the mean well above the median, making the distribution right-skewed. At least a quarter of the movies lose money based on their recorded revenue and budget. Making movies can therefore be risky: some earn huge profits, while many others earn much less or make a loss.
 
 Step d
-#WRITE YOUR CODE HERE
+
+```{r}
+# Create the natural logarithm of profits
+movies$log_profits <- log(movies$profits)
+
+# Count movies with zero or negative profits
+sum(movies$profits == 0)
+sum(movies$profits < 0)
+
+# Calculate the mean of log profits
+mean(movies$log_profits)
+```
+
 Your Answer:
-Write your formulated response here.
+
+For movies with zero profit, taking the logarithm gives −Inf. For movies with negative profit, it gives NaN, and R shows a warning. There are 162 movies with zero profit and 261 with negative profit. Because the log-profit variable contains these values, its mean is NaN.
 
 Step e
-#WRITE YOUR CODE HERE
+
+```{r}
+# Replace log profits with NA for non-positive profits
+movies$log_profits[movies$profits <= 0] <- NA
+
+# Calculate the mean, excluding missing values
+mean(movies$log_profits, na.rm = TRUE)
+
+# Create a boxplot of log profits
+boxplot(
+  movies$log_profits,
+  main = "Distribution of Log Movie Profits",
+  xlab = "Movies",
+  ylab = "Natural logarithm of profit",
+  names = "Positive-profit movies",
+  col = "lightgreen"
+)
+```
+
 Your Answer:
-Write your formulated response here.
+
+After replacing the log values for zero and negative profits with NA, the mean log profit is about 17.5448. We used `na.rm = TRUE` to leave out the missing values, so this mean only includes the 486 movies with positive profits.
+
+The new boxplot is less stretched towards high values because the logarithm brings large profits closer together. There are still several outliers on the lower side. The plots also include different movies: the first includes all movies, while the second only includes movies that made a positive profit.
 
 Step f
-#WRITE YOUR CODE HERE
-Your Answer:
-Write your formulated response here.
 
+```{r}
+# Create a scatterplot of runtime and average rating
+plot(
+  movies$runtime,
+  movies$vote_average,
+  main = "Movie Runtime and Average Audience Rating",
+  xlab = "Runtime (minutes)",
+  ylab = "Average audience rating",
+  pch = 19,
+  col = rgb(0, 0.3, 0.7, 0.4)
+)
+
+# Calculate the correlation to support the interpretation
+cor(movies$runtime, movies$vote_average)
+```
+
+Your Answer:
+
+The scatterplot suggests that longer movies tend to receive slightly higher ratings. The correlation is about 0.32, but the points are spread out, so there are plenty of exceptions.
+
+Longer movies might have more time to develop their characters and stories, which could help explain the higher ratings. Genre and movie quality could also play a role. The plot does not prove that making a movie longer will improve its rating. There are also some zero values for runtime and rating that would need checking before drawing firm conclusions.

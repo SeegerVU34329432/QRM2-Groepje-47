@@ -10,29 +10,48 @@ have. How many variables are there? How many subjects? What consists of a subjec
 #WRITE YOUR CODE HERE
 ```{r}
 movies <- read.delim("movies5.tsv")
-View(movies)
 
-dim(movies)
 nrow(movies)
 ncol(movies)
 
-length(unique(movies$title))
+length(unique(movies$index))
 ```
+# Your Answer:
 Number of observations: 909 observations (rows).
 
 Number of variables: 19 variables (columns).
 
-Number of subjects: 909 subjects.
+Number of subjects: 909 subjects (films)
 
-What consists of a subject: An individual movie (film). Each observation in the dataset corresponds to one distinct film title.
+The dataset contains 909 observations and 19 variables, including the identifier “index”. There are 909 subjects, each representing an individual movie. Each row contains one observation with information about a movie, such as its title, budget, revenue, and runtime etc. Since each movie appears exactly once in the dataset, the number of observations equals the number of subjects.
 
-Your Answer:
-Write your response here.
 2. Which of the following types of variables are present in your data set? (i) nominal; (ii) ordinal; (iii);
 interval; (iv) ratio. If present, name one example of such a variable present in your data set. [4 points]
 #WRITE YOUR CODE HERE
+```{r}
+
+
+str(movies)
+
+unique(movies$genre)
+
+sort(unique(movies$vote_average))
+
+
+head(movies$release_year)
+head(movies$runtime)
+
+```
 Your Answer:
-Write your response here.
+(i) A nominal variable is “genre”, because categories such as Comedy, Drama, and Action have no natural order.
+
+(ii) There are no clearly ordinal variables in the dataset. We treat “vote_average” as an interval variable, assuming equal distances between rating points.
+
+(iii) An interval variable is “release_year”, because equal differences represent equal amounts of time, but there is no absolute zero. For example, the difference between 2000 and 2010 is the same as between 2010 and 2020.
+
+(iv) A ratio variable is “runtime”, because duration has an absolute zero and ratios are meaningful. For example, a movie lasting 120 minutes is twice as long as a movie lasting 60 minutes. 
+
+
 3. A movie studio wants to know which types of movies give maximal profit. Perform the following steps
 to provide the movie studio with an analysis which corresponds to their request:
 a. Create the variable profits as the revenue of a movie minus its budget. Report its mean, median,

@@ -196,3 +196,205 @@ Your Answer:
 The scatterplot suggests that longer movies tend to receive slightly higher ratings. The correlation is about 0.32, but the points are spread out, so there are plenty of exceptions.
 
 Longer movies might have more time to develop their characters and stories, which could help explain the higher ratings. Genre and movie quality could also play a role. The plot does not prove that making a movie longer will improve its rating. There are also some zero values for runtime and rating that would need checking before drawing firm conclusions.
+
+
+
+Hieronder staat Week 2 om direct **onder Week 1** te plakken. Ik heb de code in R uitgevoerd en de uitkomsten gecontroleerd. `set.seed(47)` zorgt ervoor dat je dezelfde steekproeven en antwoorden krijgt.
+
+Twee punten: Bruce Willis en Tom Hanks staan gedeeld bovenaan. Bij vraag 3b lijkt “2a” een typefout; daar vergelijken we met **3a**.
+
+
+
+
+# Week 2
+
+## 1 Population and sample
+
+Is your dataset movies5.tsv the full population, or is it a sample of a larger population? If the latter, how would you describe the full population? [4 points]
+
+Your Answer:
+
+The dataset is a sample of a larger population because it contains 909 movies, rather than every movie. The full population would be all movies we want to draw conclusions about. For example, if we want to study movies released between 1990 and 2016, the population would include all movies released during those years. We cannot assume that the movies in our dataset were selected randomly.
+
+## 2 Actors and movie revenue
+
+### Step a
+
+For which actor in your data set do you observe the most movies? [2 points]
+
+#WRITE YOUR CODE HERE
+
+```{r}
+# Count the movies for each actor
+actor_counts <- table(movies$first_actor)
+
+# Show the highest counts first
+head(sort(actor_counts, decreasing = TRUE))
+```
+
+Your Answer:
+
+Bruce Willis and Tom Hanks appear most often, with 8 movies each. We use Bruce Willis for the next steps. These counts are based on the first_actor column, so they do not include appearances by actors elsewhere in a movie's cast.
+
+### Step b
+
+What is the average revenue of the movie in which this actor plays and does the revenue lie above or below the revenue of an average movie according to your data set? [2 points]
+
+#WRITE YOUR CODE HERE
+
+```{r}
+# Average revenue of movies with Bruce Willis as first_actor
+mean(movies$revenue[movies$first_actor == "Bruce Willis"],
+     na.rm = TRUE)
+
+# Average revenue of all movies
+mean(movies$revenue, na.rm = TRUE)
+```
+
+Your Answer:
+
+The average revenue of the movies with Bruce Willis is 228,062,987.38. The average revenue across all movies in the dataset is 88,846,314.90. His movies therefore earn more revenue on average than the average movie in this dataset.
+
+### Step c
+
+How trustworthy do you consider your conclusion to answer 2b? Use the term "law of large numbers" in your explanation. [2 points]
+
+#WRITE YOUR CODE HERE
+
+```{r}
+# Number of movies used for the Bruce Willis average
+sum(movies$first_actor == "Bruce Willis", na.rm = TRUE)
+```
+
+Your Answer:
+
+The comparison is correct for this dataset, but it is based on only 8 Bruce Willis movies. One or two very successful movies could have a large effect on his average.
+
+The law of large numbers tells us that, with a sufficiently large random sample, the sample mean tends to get closer to the population mean. Since we only have 8 movies and do not know whether they were randomly selected, we should be careful about applying this result to all Bruce Willis movies. It also does not show that Bruce Willis himself causes higher revenue.
+
+## 3 Population and sample variance
+
+For this question, you will assume that your data set is the full population.
+
+### Step a
+
+Recode profits such that it is expressed in millions. What is the variance of the variable profits (in millions) in your data set? [2 points]
+
+#WRITE YOUR CODE HERE
+
+```{r}
+# Calculate profits in millions
+movies$profits <- (movies$revenue - movies$budget) / 1000000
+
+# Calculate the population variance
+population_variance <- mean(
+  (movies$profits - mean(movies$profits))^2
+)
+
+population_variance
+```
+
+Your Answer:
+
+The population variance of profits is approximately 17,802.62. Since profits are expressed in millions, the variance is expressed in squared millions.
+
+We calculated the average squared distance from the mean. This divides by the number of movies, because we are treating the dataset as the full population. The usual var() function divides by the number of observations minus one and is used to calculate sample variance.
+
+### Step b
+
+Create a new data set, called movies_sample. Make sure that it is a random sample of your data set of 25 movies. What is the variance of profits in this random sample? How does it compare to the variance of profits in 2a? [2 points]
+
+#WRITE YOUR CODE HERE
+
+```{r}
+# Make the random sample reproducible
+set.seed(47)
+
+# Select a random sample of 25 movies
+movies_sample <- movies[sample(nrow(movies), 25), ]
+
+# Calculate the sample variance
+var(movies_sample$profits)
+```
+
+Your Answer:
+
+The sample variance is approximately 15,728.93 squared millions. This is lower than the population variance of 17,802.62 from step 3a.
+
+The values differ because the sample contains only 25 of the 909 movies. A different random sample could give a higher or lower variance, depending on which movies are selected.
+
+### Step c
+
+In a for loop, create 100 different samples of 25 movies, as in b, and estimate the variance within each sample. Save the variance of each sample in a vector called sample_vars. So the first position of the vector would have the variance of the first sample, the second position the variance of the second sample, etc. Print the start of this vector. [2 points]
+
+#WRITE YOUR CODE HERE
+
+```{r}
+# Make the random samples reproducible
+set.seed(47)
+
+# Create space for 100 sample variances
+sample_vars <- numeric(100)
+
+# Take 100 samples and save their variances
+for (i in 1:100) {
+  movies_sample <- movies[sample(nrow(movies), 25), ]
+  sample_vars[i] <- var(movies_sample$profits)
+}
+
+# Show the first six sample variances
+head(sample_vars)
+```
+
+Your Answer:
+
+We took 100 random samples of 25 movies and saved each sample variance in sample_vars. The first six variances are approximately 15,728.93, 31,971.87, 16,532.82, 28,257.89, 24,848.85, and 56,289.00.
+
+The variances differ because each sample contains a different selection of movies.
+
+## 3 Population and sample variance continued
+
+### Step d
+
+Summarize and make a histogram of sample_vars. What is the mean, standard deviation and shape of its distribution? [2 points]
+
+#WRITE YOUR CODE HERE
+
+```{r}
+# Summarize the sample variances
+summary(sample_vars)
+
+# Calculate the mean and standard deviation
+mean(sample_vars)
+sd(sample_vars)
+
+# Create a histogram
+hist(sample_vars,
+     main = "Sample variances of movie profits",
+     xlab = "Sample variance (squared millions)",
+     ylab = "Frequency",
+     col = "lightblue")
+```
+
+Your Answer:
+
+The mean of the 100 sample variances is approximately 19,982.63, and the standard deviation is approximately 16,853.97. Both are expressed in squared millions.
+
+The histogram shows many lower sample variances and a smaller number of much higher values, creating a long tail to the right. Samples that include movies with exceptionally high profits can have much larger variances than samples without those movies.
+
+### Step e
+
+In your opinion, is a sample of 25 movies sufficient to get a reliable estimate of the population variance of profits, using the sample variance? Explain. [2 points]
+
+Your Answer:
+
+A sample of 25 movies does not seem large enough to give a reliable estimate of the population variance in this dataset. The sample variances differ a lot, and their standard deviation is large compared with their mean.
+
+A few movies have exceptionally high profits. Including or missing one of these movies can strongly change the sample variance. A larger random sample would generally give a more stable estimate of the population variance.
+````
+
+
+
+
+
+

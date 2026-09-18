@@ -19,7 +19,7 @@ nrow(movies)
 # Count the columns (variables)
 ncol(movies)
 
-# Count the unique movie identifiers
+# Count the unique movies and identify them
 length(unique(movies$index))
 ```
 
@@ -88,13 +88,13 @@ For each step, you should provide first all the code you used to answer the ques
 movies$profits <- movies$revenue - movies$budget
 
 # Calculate mean/median/max/min
-# Calculate the average profit
+
 mean(movies$profits)
-# Calculate the median profit
+
 median(movies$profits)
-# Show the highest profit
+
 max(movies$profits)
-# Show the lowest profit
+
 min(movies$profits)
 ```
 
@@ -147,9 +147,7 @@ The boxplot shows that a few movies make much higher profits than the rest, whic
 movies$log_profits <- log(movies$profits)
 
 # Count movies with zero or negative profits
-# Count movies with zero profit
 sum(movies$profits == 0)
-# Count movies with negative profit
 sum(movies$profits < 0)
 
 # Calculate the mean of log profits

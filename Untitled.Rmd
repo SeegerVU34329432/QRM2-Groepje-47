@@ -384,6 +384,6 @@ In your opinion, is a sample of 25 movies sufficient to get a reliable estimate 
 A sample of 25 movies does not seem large enough to give a reliable estimate of the population variance in this dataset. The sample variances differ a lot, and their standard deviation is large compared with their mean.
 
 A few movies have exceptionally high profits. Including or missing one of these movies can strongly change the sample variance. A larger random sample would generally give a more stable estimate of the population variance, in this data-set.
-
+ 
 
 

@@ -392,14 +392,26 @@ b. Now, assume that the variance of *runtime* amongst thriller movies in your da
 *step a*
 
 ```{r}
-#WRITE YOUR CODE HERE
+# Select thriller movies, excluding missing genres
+thriller_movies <- subset(movies, genre == "Thriller")
+
+# Number of thriller movies
+nrow(thriller_movies)
+
+# Mean runtime
+mean(thriller_movies$runtime)
+
+# 99% confidence interval
+t.test(thriller_movies$runtime, conf.level = 0.99)$conf.int
 
 
 ```
 
 **Your Answer:**
 
-Write your formulated response here.
+We selected the 127 thriller movies from our dataset. Their average runtime is approximately 106.20 minutes. The 99% confidence interval is [102.69, 109.70] minutes. This means we are 99% confident that the population mean runtime of thriller movies lies within this interval. The interval refers to the average runtime, not the runtime of individual movies.
+
+
 
 *step b*
 

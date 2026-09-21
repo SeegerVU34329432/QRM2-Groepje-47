@@ -311,7 +311,7 @@ var(movies_sample$profits)
 
 The sample variance is approximately 15,728.93 squared millions. This is lower than the population variance of 17,802.62 from the previous step.
 
-The values differ because the sample contains only 25 of the 909 movies. A different sample could give a higher or lower variance, depending on which movies are selected. A sample means a different variances, based on which movies you pick.
+The values differ because the sample contains only 25 of the 909 movies. A different sample could give a higher or lower variance, depending on which movies are selected. Different random samples can produce different sample variances, depending on which movies you select.
 
 ### Step c
 
@@ -379,6 +379,119 @@ In your opinion, is a sample of 25 movies sufficient to get a reliable estimate 
 A sample of 25 movies does not seem large enough to give a reliable estimate of the population variance in this dataset. The sample variances differ a lot, and their standard deviation is large compared with their mean.
 
 A few movies have exceptionally high profits. Including or missing one of these movies can strongly change the sample variance. A larger random sample would generally give a more stable estimate of the population variance, in this data-set.
+
+# Week 3 
+
+For the next part of the assignment, assume that the movies in your data frame are a random sample of a larger population of movies. 
+
+1
+
+a. Create a new data set that only includes movies that are of the genre "Thriller". For these thriller movies, give a 99 percent confidence interval for the variable *runtime*. Interpret the result. \textbf{[2 points]}
+b. Now, assume that the variance of *runtime* amongst thriller movies in your data is exactly the same as the variance of *runtime* in the population. Under this assumption, give a 99 percent confidence interval for the variable *runtime* among thriller movies. Interpret the result. Is you confidence interval wider or less wide than the one you found under question 1a? Why is that the case? \textbf{[2 points]}
+
+*step a*
+
+```{r}
+#WRITE YOUR CODE HERE
+
+
+```
+
+**Your Answer:**
+
+Write your formulated response here.
+
+*step b*
+
+```{r}
+#WRITE YOUR CODE HERE
+
+
+```
+
+**Your Answer:**
+
+Write your formulated response here.
+
+
+2
+
+a. Using an appropriate five-step procedure, set up a test for the null hypothesis that the variance of runtime equals $500$. Clearly state your null hypothesis, alternative hypothesis your test statistic, your critical value, and your conclusion. \textbf{[2 points]}
+b. For the validity of your test in 2a, what assumption about the distribution of revenue needs to hold? Make an appropriate plot to test this assumption. What do you conclude? \textbf{[2 points]}
+
+*step a*
+
+```{r}
+#WRITE YOUR CODE HERE
+
+
+```
+
+**Your Answer:**
+
+Write your formulated response here.
+
+*step b*
+
+```{r}
+#WRITE YOUR CODE HERE
+
+
+```
+
+**Your Answer:**
+
+Write your formulated response here.
+
+3. There is an argument going on in the movie studio. *Bob* claims that they should make higher-quality movies, as this will bring in more profits. *Chantal* disagrees. She tells Bob that mediocre movies bring in the most profits. You are asked to advise on who is right.
+
+a. Create a new variable called vote_average_rounded. Make sure this variable is the same as vote_average, but without any decimals (i.e., a 6.3 becomes a 6, a 8.7 an 8, etc.). Display a histogram of vote_average_rounded. \textbf{[2 points]}
+b. Create a scatter plot with vote_average_rounded on the x axis and the mean of profits within each category of vote_average_rounded on the y-axis. Make sure it has an appropriate title, and appropriate titles and labels for the x- and y-axis. At which rating of movies are profits the highest? \textbf{[3 points]}
+c. Recreate the scatter plot with year on the x axis and mean_profits on the y-axis, but now add bars around each point, indicating the 95\% confidence interval. \textbf{[3 points]}
+d. Write an advice to settle the argument between Bob and Chantal. \textbf{[4 points]}
+
+*step a*
+
+```{r}
+#WRITE YOUR CODE HERE
+
+
+```
+
+**Your Answer:**
+
+Write your formulated response here.
+
+*step b*
+
+```{r}
+#WRITE YOUR CODE HERE
+
+
+```
+
+**Your Answer:**
+
+Write your formulated response here.
+
+*step c*
+
+```{r}
+#WRITE YOUR CODE HERE
+
+
+```
+
+**Your Answer:**
+
+Write your formulated response here.
+
+*step d*
+
+**Your Answer:**
+
+Write your formulated response here.
+
  
 
 

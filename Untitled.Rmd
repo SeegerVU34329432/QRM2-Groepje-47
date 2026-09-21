@@ -547,10 +547,9 @@ profits_by_rating[which.max(profits_by_rating$profits), ]
 ```
 
 **Your Answer:**
+Rating group 7 has the highest mean profit, at approximately 107.59 million. This group contains movies with original ratings from 7.0 up to (but not including) 8.0.
 
-Rating group 7 has the highest mean profit, at approximately 107.59 million. This group contains movies with original ratings from 7.0 up to, but not including, 8.0.
-
-Mean profits generally increase from the lower rating groups up to group 7, but then fall for groups 8 and 9. The highest-rated movies therefore do not have the highest average profit in this sample.
+Mean profits climb as you move from the lower rating groups to group 7. After that, profits drop off for groups 8 and 9. So, in this given sample, the movies with the highest ratings don’t actually bring in the highest average (mean) profits.
 
 ### Step c
 
@@ -610,9 +609,9 @@ Many intervals are wide, showing that the estimates are uncertain. Movie profits
 Write an advice to settle the argument between Bob and Chantal. [4 points]
 
 **Your Answer:**
+Our results don’t settle the debate between Bob and Chantal. Movies in rating group 7 do best, pulling in an average profit of about $107.59 million. Groups 5 and 6 lag behind at $32.93 million and $66.89 million. If you call groups 5 and 6 “mediocre,” then Chantal’s claim doesn’t hold up.
 
-Neither Bob nor Chantal is fully supported by these results. Movies in rating group 7 have the highest mean profit, at approximately 107.59 million. This is higher than group 5, at 32.93 million, and group 6, at 66.89 million. This does not support Chantal's claim that mediocre movies make the most profit, if we use groups 5 and 6 to represent mediocre ratings.
+Still, it’s not as simple as higher ratings equal higher profits. Group 8 averages $51.48 million, and group 9 earns nothing at all. To be fair, group 8 has only 4 movies, and group 9 just one, so there’s not enough data to draw firm conclusions.
 
-However, Bob's claim that higher quality brings more profit is not always supported either. Mean profits fall to 51.48 million for group 8 and zero for group 9. These groups contain only 4 movies and 1 movie, so their averages are not reliable enough to draw firm conclusions about all highly rated movies.
+Here’s what we actually recommend: focus on making movies people like, but don’t expect that higher ratings alone bring bigger profits. Many things—budget, genre, marketing—can shift the numbers. Our data doesn’t prove that a “better” movie means higher profit. Also, the confidence intervals from step c only compare release years, not rating groups, so we can’t say if differences between the rating groups are statistically meaningful.
 
-We would advise the studio to aim for movies that audiences rate well, but not to assume that a higher rating guarantees more profit. Ratings are only one measure of quality, and factors such as budget, genre and marketing may also matter. These results show a relationship between ratings and profits; they do not prove that improving quality causes higher profits. The confidence intervals in step c compare years, so they do not tell us whether the differences between rating groups are statistically significant.

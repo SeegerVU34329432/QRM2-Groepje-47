@@ -206,7 +206,7 @@ cor(movies$runtime, movies$vote_average)
 
 The scatterplot suggests that longer movies tend to receive slightly higher ratings. The correlation is about 0.32, but the points are spread out, so there are plenty of exceptions.
 
-Longer movies might have more time to develop their characters and stories, which could help explain the higher ratings. Genre and movie quality could also play a role. The plot does not prove that making a movie longer will improve its rating. There are also some zero values for runtime and rating that would need checking before drawing firm conclusions.
+Longer movies might have more time to develop their characters and stories, which could help explain the higher ratings. Genre and movie quality could also play a role. The plot does not prove that making a movie longer will improve its rating. There are also some zero values for runtime and rating that may represent missing or incorrectly recorded data. these values should be invested before drawing firm conclusions.
 
 # Week 2
 
@@ -290,10 +290,7 @@ population_variance
 ```
 
 **Your Answer:**
-
-The population variance of profits is approximately 17,802.62. Since profits are expressed in millions, we expressed the variance in squared millions. The reason we did this is so the negative and positive would otherwise cancel out and larger differences get more weight.
-
-We calculated the average squared distance from the mean. This divides by the number of movies, because we are treating the dataset as the full population, as said in the assignment. The usual var() function divides by the number of observations minus one and is used to calculate sample variance.
+The population variance of profits is approximately 17,802.62 squared million dollars.The Variance is calculated using squared deviations from the mean, so negative and positive deviations do not cancel each other out. We divide by N, rather than N−1, because the assignment asks us to treat the dataset as the full population.
 
 ### Step b
 

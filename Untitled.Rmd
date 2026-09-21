@@ -401,14 +401,15 @@ n_thriller
 mean_runtime
 
 # Calculate the 99% confidence interval for the mean runtime
-t.test(movies_thriller$runtime, conf.level = 0.99)$conf.int
+test_runtime <- t.test(movies_thriller$runtime, conf.level = 0.99)
+test_runtime$conf.int
 ```
 
 **Your Answer:**
 
-There are 127 thriller movies, with an average runtime of approximately 106.20 minutes. The 99% confidence interval for the population mean runtime is from 102.69 to 109.70 minutes.
+There are 127 thriller movies in total, with an average runtime of approximately 106.20 minutes. The 99% confidence interval for the population mean runtime is from; 102.69 to 109.70 minutes. 
 
-We are 99% confident that the mean runtime of thriller movies in the population lies within this interval. This interval is about the population mean, rather than the runtime of an individual movie. We use the t-distribution because the population variance is unknown.
+We are 99% confident that the mean runtime of thriller movies in the population lies within this interval. This interval is about the population mean, rather than the runtime of an individual movie. We use an t-distribution because the population variance is unknown in this question.
 
 ### Step b
 
@@ -418,11 +419,11 @@ Now, assume that the variance of runtime amongst thriller movies in your data is
 # Use the sample variance as the known population variance
 population_variance_runtime <- var(movies_thriller$runtime)
 
-# Calculate the standard error of the mean
+# Calculate the standard error
 standard_error_runtime <- sqrt(population_variance_runtime / n_thriller)
 
-# Find the critical value for a 99% confidence interval
-z_value <- qnorm(0.995)
+# Critical z-value for a 99% confidence interval
+z_value <- 2.576
 
 # Calculate the lower and upper limits
 lower_runtime <- mean_runtime - z_value * standard_error_runtime
@@ -434,9 +435,9 @@ c(lower_runtime, upper_runtime)
 
 **Your Answer:**
 
-Under this assumption, the 99% confidence interval is from 102.75 to 109.65 minutes. We are 99% confident that this interval contains the population mean runtime of thriller movies.
+Under this assumption, the 99% confidence interval is from 102.75 to 109.65 minutes. This means that we are 99% confident that the true mean runtime of all thriller movies lies between those two values. 
 
-This interval is slightly narrower than the interval in step a. We now treat the population variance as known, so we use the normal distribution. Its critical value is slightly smaller than the t-value used in step a, giving a smaller margin of error.
+This interval is a little bit narrower than the interval in step a. In this question, we assume that the population variance is known, so we use the normal distribution instead of the t-distribution as we did earlier. For a 99% confidence interval, we get a  critical z-value of 2.576. Because this value is slightly smaller than the t-value used in the previous step , the confidence interval is also slightly narrower.
 
 ## 2 Testing the variance of runtime
 
@@ -445,63 +446,51 @@ This interval is slightly narrower than the interval in step a. We now treat the
 Using an appropriate five-step procedure, set up a test for the null hypothesis that the variance of runtime equals 500. Clearly state your null hypothesis, alternative hypothesis, your test statistic, your critical value, and your conclusion. [2 points]
 
 ```{r}
-# Use all movies to test the variance of runtime
-n_runtime <- length(movies$runtime)
-sample_variance_runtime <- var(movies$runtime)
+# Number of movies
+n <- nrow(movies)
 
-# Use a significance level of 5%
-alpha <- 0.05
+# Variance of runtime in the sample
+sample_variance <- var(movies$runtime)
 
-# Calculate the chi-squared test statistic under H0
-test_statistic <- (n_runtime - 1) * sample_variance_runtime / 500
+# Calculate the chi-square test statistic
+chi_square <- (n - 1) * sample_variance / 500
 
-# Calculate both critical values for a two-sided test
-critical_values <- qchisq(c(alpha / 2, 1 - alpha / 2),
-                         df = n_runtime - 1)
+# Critical values for a 5% two-sided test
+critical_values <- qchisq(c(0.025, 0.975), df = n - 1)
 
-# Show the sample variance, test statistic and critical values
-sample_variance_runtime
-test_statistic
+# Show the results
+sample_variance
+chi_square
 critical_values
 ```
 
 **Your Answer:**
 
-1. The null hypothesis is H0: the population variance of runtime equals 500 minutes squared. The alternative hypothesis is H1: the population variance of runtime does not equal 500 minutes squared.
+1. First, we set up the hypotheses. The null hypothesis, written as H0, says that the population variance of runtime is 500. This is the value we are testing here. The alternative hypothesis (H1) says that the population variance is not 500. So we want to find out if the real variance is different from 500 or not.
 
-2. We use a significance level of 5% and a two-sided chi-squared test. This test assumes that runtime is normally distributed in the population.
+2. We use a significance level of 5%, which can be written as alpha = 0.05. This is the limit we use to decide if the result is unusual enough to reject the null hypothesis (H0). We use a two-sided test because the variance can be either lower or higher than 500. 
 
-3. Using all 909 movies, the sample variance is approximately 396.60 minutes squared. The test statistic is (909 - 1) × 396.60 / 500 = 720.23, using the unrounded sample variance in the calculation. Under H0, the statistic follows a chi-squared distribution with 908 degrees of freedom if the normality assumption holds.
+3. There are 909 movies in the sample. The variance of runtime in our sample comes in at about 396.60. This is lower than 500, but we cannot just reject H0 just because these two numbers are different from eachother. We first have to check if the difference is large enough. For this, we calculate the chi-squared test statistic; our calculations found out the test statistic is 720.23.
 
-4. The critical values are 826.39 and 993.40. We reject H0 if the test statistic is below 826.39 or above 993.40.
+4.In this step we calculate the critical value, these are the limits that we use to decide whether we reject H0 or not. The critical values are 826.39 and 993.40. If the test statistic is between these two values, we don't reject the null hypothesis. If the test statistic is lower than 826.39 or higher than 993.40, we reject H0.
 
-5. Since 720.23 is below 826.39, we reject H0 at the 5% significance level. Under the test's assumptions, there is evidence that the population variance differs from 500 minutes squared. The sample variance is lower than 500. We check the distribution assumption in step b.
+5. Our test statistic comes out at 720.23. This is below  the lower critical value of 826.39. This means that our result is outside of the range where we would keep the Null hypothesis. Therefore, are able to reject it. There is enough evidence to say that the population variance of runtime is different from 500. In our sample, the variance is 396.60, so the variance is lower than 500 that is found in the sample.
 
 ### Step b
 
 For the validity of your test in 2a, what assumption about the distribution of revenue needs to hold? Make an appropriate plot to test this assumption. What do you conclude? [2 points]
 
 ```{r}
-# Check the distribution of revenue, as asked in the question
-qqnorm(movies$revenue,
-       main = "Normal Q-Q plot of movie revenue",
-       xlab = "Theoretical normal quantiles",
-       ylab = "Revenue")
-qqline(movies$revenue, col = "red")
-
-# Also check runtime, because the test in step a uses runtime
-qqnorm(movies$runtime,
-       main = "Normal Q-Q plot of movie runtime",
-       xlab = "Theoretical normal quantiles",
-       ylab = "Runtime (minutes)")
-qqline(movies$runtime, col = "red")
+# Create a histogram to check whether runtime is approximately normal
+hist(movies$runtime,
+     main = "Distribution of movie runtime",
+     xlab = "Runtime (minutes)",
+     ylab = "Number of movies",
+     col = "lightblue")
 ```
 
 **Your Answer:**
-
-The question mentions revenue, so we first made a Q-Q plot of revenue. If revenue were normally distributed, the points would roughly follow the red line. They clearly do not: many movies have low or zero revenue, while a few have very high revenue. Revenue does not appear to be normally distributed.
-
-However, the test in step a is about the variance of runtime. Its validity requires normally distributed runtime, rather than normally distributed revenue. We therefore also made a Q-Q plot of runtime. The middle points are fairly close to the line, but the points at both ends show clear departures, including several zero runtimes. The normality assumption is questionable, so the result in step a should be treated with caution.
+The chi-squared test in step a relies on the idea that runtime follows a normal distribution in the population. To check this, we looked at a histogram. There’s a clear cluster of movies between 80 and 120 minutes, and the center does look somewhat bell-shaped. But the right side stretches out much further, and there are a few very short runtimes—some are even zero. So, the distribution isn’t clearly normal. With this in mind, the normality assumption is shaky, and we need to be cautious about any conclusions from step a.
 
 ## 3 Movie ratings and profits
 

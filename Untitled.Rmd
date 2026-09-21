@@ -380,130 +380,250 @@ A sample of 25 movies does not seem large enough to give a reliable estimate of 
 
 A few movies have exceptionally high profits. Including or missing one of these movies can strongly change the sample variance. A larger random sample would generally give a more stable estimate of the population variance, in this data-set.
 
-# Week 3 
+# Week 3
 
-For the next part of the assignment, assume that the movies in your data frame are a random sample of a larger population of movies. 
+For the next part of the assignment, assume that the movies in your data frame are a random sample of a larger population of movies.
 
-1
+## 1 Confidence intervals for runtime
 
-a. Create a new data set that only includes movies that are of the genre "Thriller". For these thriller movies, give a 99 percent confidence interval for the variable *runtime*. Interpret the result. \textbf{[2 points]}
-b. Now, assume that the variance of *runtime* amongst thriller movies in your data is exactly the same as the variance of *runtime* in the population. Under this assumption, give a 99 percent confidence interval for the variable *runtime* among thriller movies. Interpret the result. Is you confidence interval wider or less wide than the one you found under question 1a? Why is that the case? \textbf{[2 points]}
+### Step a
 
-*step a*
+Create a new data set that only includes movies that are of the genre “Thriller”. For these thriller movies, give a 99 percent confidence interval for the variable runtime. Interpret the result. [2 points]
 
 ```{r}
-# Select thriller movies, excluding missing genres
-thriller_movies <- subset(movies, genre == "Thriller")
+# Create a dataset with only thriller movies
+movies_thriller <- subset(movies, genre == "Thriller")
 
-# Number of thriller movies
-nrow(thriller_movies)
+# Calculate the number of thrillers and their average runtime
+n_thriller <- nrow(movies_thriller)
+mean_runtime <- mean(movies_thriller$runtime)
+n_thriller
+mean_runtime
 
-# Mean runtime
-mean(thriller_movies$runtime)
-
-# 99% confidence interval
-t.test(thriller_movies$runtime, conf.level = 0.99)$conf.int
-
-
+# Calculate the 99% confidence interval for the mean runtime
+t.test(movies_thriller$runtime, conf.level = 0.99)$conf.int
 ```
 
 **Your Answer:**
 
-We selected the 127 thriller movies from our dataset. Their average runtime is approximately 106.20 minutes. The 99% confidence interval is [102.69, 109.70] minutes. This means we are 99% confident that the population mean runtime of thriller movies lies within this interval. The interval refers to the average runtime, not the runtime of individual movies.
+There are 127 thriller movies, with an average runtime of approximately 106.20 minutes. The 99% confidence interval for the population mean runtime is from 102.69 to 109.70 minutes.
 
+We are 99% confident that the mean runtime of thriller movies in the population lies within this interval. This interval is about the population mean, rather than the runtime of an individual movie. We use the t-distribution because the population variance is unknown.
 
+### Step b
 
-*step b*
+Now, assume that the variance of runtime amongst thriller movies in your data is exactly the same as the variance of runtime in the population. Under this assumption, give a 99 percent confidence interval for the variable runtime among thriller movies. Interpret the result. Is your confidence interval wider or less wide than the one you found under question 1a? Why is that the case? [2 points]
 
 ```{r}
-#WRITE YOUR CODE HERE
+# Use the sample variance as the known population variance
+population_variance_runtime <- var(movies_thriller$runtime)
 
+# Calculate the standard error of the mean
+standard_error_runtime <- sqrt(population_variance_runtime / n_thriller)
 
+# Find the critical value for a 99% confidence interval
+z_value <- qnorm(0.995)
+
+# Calculate the lower and upper limits
+lower_runtime <- mean_runtime - z_value * standard_error_runtime
+upper_runtime <- mean_runtime + z_value * standard_error_runtime
+
+# Show the confidence interval
+c(lower_runtime, upper_runtime)
 ```
 
 **Your Answer:**
 
-Write your formulated response here.
+Under this assumption, the 99% confidence interval is from 102.75 to 109.65 minutes. We are 99% confident that this interval contains the population mean runtime of thriller movies.
 
+This interval is slightly narrower than the interval in step a. We now treat the population variance as known, so we use the normal distribution. Its critical value is slightly smaller than the t-value used in step a, giving a smaller margin of error.
 
-2
+## 2 Testing the variance of runtime
 
-a. Using an appropriate five-step procedure, set up a test for the null hypothesis that the variance of runtime equals $500$. Clearly state your null hypothesis, alternative hypothesis your test statistic, your critical value, and your conclusion. \textbf{[2 points]}
-b. For the validity of your test in 2a, what assumption about the distribution of revenue needs to hold? Make an appropriate plot to test this assumption. What do you conclude? \textbf{[2 points]}
+### Step a
 
-*step a*
+Using an appropriate five-step procedure, set up a test for the null hypothesis that the variance of runtime equals 500. Clearly state your null hypothesis, alternative hypothesis, your test statistic, your critical value, and your conclusion. [2 points]
 
 ```{r}
-#WRITE YOUR CODE HERE
+# Use all movies to test the variance of runtime
+n_runtime <- length(movies$runtime)
+sample_variance_runtime <- var(movies$runtime)
 
+# Use a significance level of 5%
+alpha <- 0.05
 
+# Calculate the chi-squared test statistic under H0
+test_statistic <- (n_runtime - 1) * sample_variance_runtime / 500
+
+# Calculate both critical values for a two-sided test
+critical_values <- qchisq(c(alpha / 2, 1 - alpha / 2),
+                         df = n_runtime - 1)
+
+# Show the sample variance, test statistic and critical values
+sample_variance_runtime
+test_statistic
+critical_values
 ```
 
 **Your Answer:**
 
-Write your formulated response here.
+1. The null hypothesis is H0: the population variance of runtime equals 500 minutes squared. The alternative hypothesis is H1: the population variance of runtime does not equal 500 minutes squared.
 
-*step b*
+2. We use a significance level of 5% and a two-sided chi-squared test. This test assumes that runtime is normally distributed in the population.
+
+3. Using all 909 movies, the sample variance is approximately 396.60 minutes squared. The test statistic is (909 - 1) × 396.60 / 500 = 720.23, using the unrounded sample variance in the calculation. Under H0, the statistic follows a chi-squared distribution with 908 degrees of freedom if the normality assumption holds.
+
+4. The critical values are 826.39 and 993.40. We reject H0 if the test statistic is below 826.39 or above 993.40.
+
+5. Since 720.23 is below 826.39, we reject H0 at the 5% significance level. Under the test's assumptions, there is evidence that the population variance differs from 500 minutes squared. The sample variance is lower than 500. We check the distribution assumption in step b.
+
+### Step b
+
+For the validity of your test in 2a, what assumption about the distribution of revenue needs to hold? Make an appropriate plot to test this assumption. What do you conclude? [2 points]
 
 ```{r}
-#WRITE YOUR CODE HERE
+# Check the distribution of revenue, as asked in the question
+qqnorm(movies$revenue,
+       main = "Normal Q-Q plot of movie revenue",
+       xlab = "Theoretical normal quantiles",
+       ylab = "Revenue")
+qqline(movies$revenue, col = "red")
 
-
+# Also check runtime, because the test in step a uses runtime
+qqnorm(movies$runtime,
+       main = "Normal Q-Q plot of movie runtime",
+       xlab = "Theoretical normal quantiles",
+       ylab = "Runtime (minutes)")
+qqline(movies$runtime, col = "red")
 ```
 
 **Your Answer:**
 
-Write your formulated response here.
+The question mentions revenue, so we first made a Q-Q plot of revenue. If revenue were normally distributed, the points would roughly follow the red line. They clearly do not: many movies have low or zero revenue, while a few have very high revenue. Revenue does not appear to be normally distributed.
 
-3. There is an argument going on in the movie studio. *Bob* claims that they should make higher-quality movies, as this will bring in more profits. *Chantal* disagrees. She tells Bob that mediocre movies bring in the most profits. You are asked to advise on who is right.
+However, the test in step a is about the variance of runtime. Its validity requires normally distributed runtime, rather than normally distributed revenue. We therefore also made a Q-Q plot of runtime. The middle points are fairly close to the line, but the points at both ends show clear departures, including several zero runtimes. The normality assumption is questionable, so the result in step a should be treated with caution.
 
-a. Create a new variable called vote_average_rounded. Make sure this variable is the same as vote_average, but without any decimals (i.e., a 6.3 becomes a 6, a 8.7 an 8, etc.). Display a histogram of vote_average_rounded. \textbf{[2 points]}
-b. Create a scatter plot with vote_average_rounded on the x axis and the mean of profits within each category of vote_average_rounded on the y-axis. Make sure it has an appropriate title, and appropriate titles and labels for the x- and y-axis. At which rating of movies are profits the highest? \textbf{[3 points]}
-c. Recreate the scatter plot with year on the x axis and mean_profits on the y-axis, but now add bars around each point, indicating the 95\% confidence interval. \textbf{[3 points]}
-d. Write an advice to settle the argument between Bob and Chantal. \textbf{[4 points]}
+## 3 Movie ratings and profits
 
-*step a*
+There is an argument going on in the movie studio. Bob claims that they should make higher-quality movies, as this will bring in more profits. Chantal disagrees. She tells Bob that mediocre movies bring the most profits. You are asked to advise on who is right.
+
+### Step a
+
+Create a new variable called vote_average_rounded. Make sure this variable is the same as vote_average, but without any decimals (i.e., a 6.3 becomes a 6, a 8.7 an 8, etc.). Display a histogram of vote_average_rounded. [2 points]
 
 ```{r}
-#WRITE YOUR CODE HERE
+# Remove decimals, following the examples in the question
+movies$vote_average_rounded <- floor(movies$vote_average)
 
+# Create a histogram with one bar for each whole-number rating
+hist(movies$vote_average_rounded,
+     breaks = seq(-0.5, 10.5, by = 1),
+     main = "Distribution of movie ratings",
+     xlab = "Rating without decimals",
+     ylab = "Number of movies",
+     col = "lightblue")
 
+# Count the movies in each rating group
+table(movies$vote_average_rounded)
 ```
 
 **Your Answer:**
 
-Write your formulated response here.
+We removed the decimals using floor(), so 6.3 becomes 6 and 8.7 becomes 8, as in the question. Most movies are in rating groups 5, 6 and 7. Group 6 is the largest, with 387 movies. There are only 4 movies in group 8 and 1 movie in group 9.
 
-*step b*
+### Step b
+
+Create a scatter plot with vote_average_rounded on the x axis and the mean of profits within each category of vote_average_rounded on the y-axis. Make sure it has an appropriate title, and appropriate titles and labels for the x- and y-axis. At which rating of movies are the profits the highest? [3 points]
 
 ```{r}
-#WRITE YOUR CODE HERE
+# Calculate the mean profit for each rating group
+# Profits are already expressed in millions in week 2
+profits_by_rating <- aggregate(profits ~ vote_average_rounded,
+                               data = movies, FUN = mean)
 
+# Show the mean profits for each rating group
+profits_by_rating
 
+# Create a scatterplot of rating groups and mean profits
+plot(profits_by_rating$vote_average_rounded,
+     profits_by_rating$profits,
+     main = "Average movie profits by rating",
+     xlab = "Rating without decimals",
+     ylab = "Mean profit (millions)",
+     pch = 19,
+     col = "blue")
+
+# Show the rating group with the highest mean profit
+profits_by_rating[which.max(profits_by_rating$profits), ]
 ```
 
 **Your Answer:**
 
-Write your formulated response here.
+Rating group 7 has the highest mean profit, at approximately 107.59 million. This group contains movies with original ratings from 7.0 up to, but not including, 8.0.
 
-*step c*
+Mean profits generally increase from the lower rating groups up to group 7, but then fall for groups 8 and 9. The highest-rated movies therefore do not have the highest average profit in this sample.
+
+### Step c
+
+Recreate the scatter plot with year on the x axis and mean profits on the y-axis, but now add bars around each point, indicating the 95% confidence interval. [3 points]
 
 ```{r}
-#WRITE YOUR CODE HERE
+# List the release years from lowest to highest
+years <- sort(unique(movies$release_year))
 
+# Create space for the mean and confidence limits for each year
+mean_profits_year <- numeric(length(years))
+lower_profits_year <- numeric(length(years))
+upper_profits_year <- numeric(length(years))
 
+# Calculate the mean profit and 95% confidence interval for each year
+for (i in 1:length(years)) {
+  # Select the profits of movies released in this year
+  year_profits <- movies$profits[movies$release_year == years[i]]
+
+  # Calculate the mean and standard error
+  mean_profits_year[i] <- mean(year_profits)
+  standard_error_year <- sd(year_profits) / sqrt(length(year_profits))
+
+  # Calculate the margin of error using the t-distribution
+  margin_year <- qt(0.975, df = length(year_profits) - 1) *
+    standard_error_year
+
+  # Save the lower and upper confidence limits
+  lower_profits_year[i] <- mean_profits_year[i] - margin_year
+  upper_profits_year[i] <- mean_profits_year[i] + margin_year
+}
+
+# Create the scatterplot, leaving room for all confidence intervals
+plot(years, mean_profits_year,
+     main = "Average movie profits by release year",
+     xlab = "Release year",
+     ylab = "Mean profit (millions)",
+     ylim = range(lower_profits_year, upper_profits_year),
+     pch = 19,
+     col = "blue")
+
+# Add the confidence interval bars
+arrows(x0 = years, y0 = lower_profits_year,
+       x1 = years, y1 = upper_profits_year,
+       angle = 90, code = 3, length = 0.05,
+       col = "blue")
 ```
 
 **Your Answer:**
 
-Write your formulated response here.
+The plot shows the mean profit for each release year, with bars showing its 95% confidence interval. The highest mean profit is in 2012, at approximately 117.49 million. Its confidence interval runs from 52.28 to 182.70 million.
 
-*step d*
+Many intervals are wide, showing that the estimates are uncertain. Movie profits vary a lot, and some years contain few movies. These t-intervals are approximate because profits are strongly skewed, especially for years with small samples. This plot compares release years, as requested in the question.
+
+### Step d
+
+Write an advice to settle the argument between Bob and Chantal. [4 points]
 
 **Your Answer:**
 
-Write your formulated response here.
+Neither Bob nor Chantal is fully supported by these results. Movies in rating group 7 have the highest mean profit, at approximately 107.59 million. This is higher than group 5, at 32.93 million, and group 6, at 66.89 million. This does not support Chantal's claim that mediocre movies make the most profit, if we use groups 5 and 6 to represent mediocre ratings.
 
- 
+However, Bob's claim that higher quality brings more profit is not always supported either. Mean profits fall to 51.48 million for group 8 and zero for group 9. These groups contain only 4 movies and 1 movie, so their averages are not reliable enough to draw firm conclusions about all highly rated movies.
 
-
+We would advise the studio to aim for movies that audiences rate well, but not to assume that a higher rating guarantees more profit. Ratings are only one measure of quality, and factors such as budget, genre and marketing may also matter. These results show a relationship between ratings and profits; they do not prove that improving quality causes higher profits. The confidence intervals in step c compare years, so they do not tell us whether the differences between rating groups are statistically significant.

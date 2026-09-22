@@ -1,9 +1,21 @@
- ---
+---
 title: "QRM2"
 author: "Groepje 47"
 date: "2026-09-04"
-output: html_document
+output:
+  word_document:
+    reference_docx: "QRM2_opmaak.docx"
+    highlight: tango
+    pandoc_args: ["--lua-filter=QRM2_opmaak.lua"]
 ---
+
+```{r setup, include=FALSE}
+# Use the same clear layout for all graphs and code output
+knitr::opts_chunk$set(fig.width = 6.2, fig.height = 3.0,
+                      dpi = 200, collapse = TRUE, error = FALSE)
+options(width = 75)
+```
+
 # Week 1
 
 ## 1 Dataset
@@ -29,9 +41,9 @@ Number of observations: 909 observations (rows).
 
 Number of variables: 19 variables (columns).
 
-Number of subjects: 909 subjects (films)
+Number of subjects: 909 subjects (films).
 
-The dataset contains 909 observations and 19 variables, including the identifier “index”. There are 909 subjects, each representing an individual movie. Each row contains one observation with information about a movie, such as its title, budget, revenue, and runtime etc. Since each movie appears exactly once in the dataset, the number of observations equals the number of subjects.
+The dataset contains 909 observations and 19 variables, including the identifier “index”. There are 909 subjects, each representing an individual movie. Each row contains one observation with information about a movie, such as its title, budget, revenue, and runtime. Since each movie appears exactly once in the dataset, the number of observations equals the number of subjects.
 
 ## 2 Types of variables
 
@@ -57,7 +69,7 @@ head(movies$runtime)
 
 (i) “Genre” is a nominal variable, since categories like Comedy, Drama, and Action don’t have any natural order.
 
-(ii) The dataset does not include an ordinal variable. We treat “vote_average” as an interval variable, which assumes the rating points have a even distance apart.
+(ii) The dataset does not include an ordinal variable. We treat “vote_average” as an interval variable, which assumes equal distances between rating points.
 
 (iii) “Release_year” qualifies as an interval variable. The gap between two years always means the same thing—ten years is ten years—yet there’s no true zero. So, moving from 2000 to 2010 is just as much time as 2010 to 2020.
 
@@ -206,7 +218,9 @@ cor(movies$runtime, movies$vote_average)
 
 The scatterplot suggests that longer movies tend to receive slightly higher ratings. The correlation is about 0.32, but the points are spread out, so there are plenty of exceptions.
 
-Longer movies might have more time to develop their characters and stories, which could help explain the higher ratings. Genre and movie quality could also play a role. The plot does not prove that making a movie longer will improve its rating. There are also some zero values for runtime and rating that may represent missing or incorrectly recorded data. these values should be invested before drawing firm conclusions.
+Longer movies might have more time to develop their characters and stories, which could help explain the higher ratings. Genre and movie quality could also play a role. The plot does not prove that making a movie longer will improve its rating. There are also some zero values for runtime and rating that may represent missing or incorrectly recorded data. These values should be investigated before drawing firm conclusions.
+
+\newpage
 
 # Week 2
 
@@ -290,7 +304,8 @@ population_variance
 ```
 
 **Your Answer:**
-The population variance of profits is approximately 17,802.62 squared million dollars.The Variance is calculated using squared deviations from the mean, so negative and positive deviations do not cancel each other out. We divide by N, rather than N−1, because the assignment asks us to treat the dataset as the full population.
+
+The population variance of profits is approximately 17,802.62 squared million dollars. The variance is calculated using squared deviations from the mean, so negative and positive deviations do not cancel each other out. We divide by N, rather than N−1, because the assignment asks us to treat the dataset as the full population.
 
 ### Step b
 
@@ -311,7 +326,7 @@ var(movies_sample$profits)
 
 The sample variance is approximately 15,728.93 squared millions. This is lower than the population variance of 17,802.62 from the previous step.
 
-The values differ because the sample contains only 25 of the 909 movies. A different sample could give a higher or lower variance, depending on which movies are selected. Different random samples can produce different sample variances, depending on which movies you select.
+The values differ because the sample contains only 25 of the 909 movies. A different sample could give a higher or lower variance, depending on which movies are selected.
 
 ### Step c
 
@@ -346,7 +361,7 @@ The variances differ because each sample contains a different selection of movie
 
 Summarize and make a histogram of sample_vars. What is the mean, standard deviation and shape of its distribution? [2 points]
 
-```{r}
+```{r collapse=FALSE}
 # Summarize the sample variances
 summary(sample_vars)
 
@@ -378,7 +393,9 @@ In your opinion, is a sample of 25 movies sufficient to get a reliable estimate 
 
 A sample of 25 movies does not seem large enough to give a reliable estimate of the population variance in this dataset. The sample variances differ a lot, and their standard deviation is large compared with their mean.
 
-A few movies have exceptionally high profits. Including or missing one of these movies can strongly change the sample variance. A larger random sample would generally give a more stable estimate of the population variance, in this data-set.
+A few movies have exceptionally high profits. Including or missing one of these movies can strongly change the sample variance. A larger random sample would generally give a more stable estimate of the population variance, in this dataset.
+
+\newpage
 
 # Week 3
 
@@ -407,9 +424,9 @@ test_runtime$conf.int
 
 **Your Answer:**
 
-There are 127 thriller movies in total, with an average runtime of approximately 106.20 minutes. The 99% confidence interval for the population mean runtime is from; 102.69 to 109.70 minutes. 
+There are 127 thriller movies in total, with an average runtime of approximately 106.20 minutes. The 99% confidence interval for the population mean runtime is from 102.69 to 109.70 minutes.
 
-We are 99% confident that the mean runtime of thriller movies in the population lies within this interval. This interval is about the population mean, rather than the runtime of an individual movie. We use an t-distribution because the population variance is unknown in this question.
+We are 99% confident that the mean runtime of thriller movies in the population lies within this interval. This interval is about the population mean, rather than the runtime of an individual movie. We use a t-distribution because the population variance is unknown in this question.
 
 ### Step b
 
@@ -435,9 +452,9 @@ c(lower_runtime, upper_runtime)
 
 **Your Answer:**
 
-Under this assumption, the 99% confidence interval is from 102.75 to 109.65 minutes. This means that we are 99% confident that the true mean runtime of all thriller movies lies between those two values. 
+Under this assumption, the 99% confidence interval is from 102.75 to 109.65 minutes. This means that we are 99% confident that the true mean runtime of all thriller movies lies between those two values.
 
-This interval is a little bit narrower than the interval in step a. In this question, we assume that the population variance is known, so we use the normal distribution instead of the t-distribution as we did earlier. For a 99% confidence interval, we get a  critical z-value of 2.576. Because this value is slightly smaller than the t-value used in the previous step , the confidence interval is also slightly narrower.
+This interval is a little bit narrower than the interval in step a. In this question, we assume that the population variance is known, so we use the normal distribution instead of the t-distribution as we did earlier. For a 99% confidence interval, we get a critical z-value of 2.576. Because this value is slightly smaller than the t-value used in the previous step, the confidence interval is also slightly narrower.
 
 ## 2 Testing the variance of runtime
 
@@ -466,19 +483,19 @@ critical_values
 
 **Your Answer:**
 
-1. First, we set up the hypotheses. The null hypothesis, written as H0, says that the population variance of runtime is 500. This is the value we are testing here. The alternative hypothesis (H1) says that the population variance is not 500. So we want to find out if the real variance is different from 500 or not.
+1. The null hypothesis is H0: the population variance of runtime equals 500 minutes squared. The alternative hypothesis is H1: the population variance is not equal to 500 minutes squared.
 
-2. We use a significance level of 5%, which can be written as alpha = 0.05. This is the limit we use to decide if the result is unusual enough to reject the null hypothesis (H0). We use a two-sided test because the variance can be either lower or higher than 500. 
+2. We use a significance level of 5% and a two-sided chi-squared test. The test assumes that runtime is normally distributed in the population.
 
-3. There are 909 movies in the sample. The variance of runtime in our sample comes in at about 396.60. This is lower than 500, but we cannot just reject H0 just because these two numbers are different from eachother. We first have to check if the difference is large enough. For this, we calculate the chi-squared test statistic; our calculations found out the test statistic is 720.23.
+3. There are 909 movies in the sample. The sample variance is approximately 396.60 minutes squared. The test statistic is calculated as (909 - 1) times the sample variance divided by 500, which gives 720.23. Under H0 and the normality assumption, this statistic follows a chi-squared distribution with 908 degrees of freedom.
 
-4.In this step we calculate the critical value, these are the limits that we use to decide whether we reject H0 or not. The critical values are 826.39 and 993.40. If the test statistic is between these two values, we don't reject the null hypothesis. If the test statistic is lower than 826.39 or higher than 993.40, we reject H0.
+4. The critical values are 826.39 and 993.40. We reject H0 if the test statistic is below 826.39 or above 993.40. Otherwise, we do not reject H0.
 
-5. Our test statistic comes out at 720.23. This is below  the lower critical value of 826.39. This means that our result is outside of the range where we would keep the Null hypothesis. Therefore, are able to reject it. There is enough evidence to say that the population variance of runtime is different from 500. In our sample, the variance is 396.60, so the variance is lower than 500 that is found in the sample.
+5. Since 720.23 is below 826.39, we reject H0 at the 5% significance level, assuming that runtime is normally distributed. The sample variance of 396.60 is lower than the hypothesized population variance of 500 minutes squared. In step b, we check whether the normality assumption seems reasonable.
 
 ### Step b
 
-For the validity of your test in 2a, what assumption about the distribution of revenue needs to hold? Make an appropriate plot to test this assumption. What do you conclude? [2 points]
+For the validity of your test in 2a, what assumption about the distribution of runtime needs to hold? Make an appropriate plot to test this assumption. What do you conclude? [2 points]
 
 ```{r}
 # Create a histogram to check whether runtime is approximately normal
@@ -490,7 +507,10 @@ hist(movies$runtime,
 ```
 
 **Your Answer:**
+
 The chi-squared test in step a relies on the idea that runtime follows a normal distribution in the population. To check this, we looked at a histogram. There’s a clear cluster of movies between 80 and 120 minutes, and the center does look somewhat bell-shaped. But the right side stretches out much further, and there are a few very short runtimes—some are even zero. So, the distribution isn’t clearly normal. With this in mind, the normality assumption is shaky, and we need to be cautious about any conclusions from step a.
+
+\newpage
 
 ## 3 Movie ratings and profits
 
@@ -547,9 +567,10 @@ profits_by_rating[which.max(profits_by_rating$profits), ]
 ```
 
 **Your Answer:**
+
 Rating group 7 has the highest mean profit, at approximately 107.59 million. This group contains movies with original ratings from 7.0 up to (but not including) 8.0.
 
-Mean profits climb as you move from the lower rating groups to group 7. After that, profits drop off for groups 8 and 9. So, in this given sample, the movies with the highest ratings don’t actually bring in the highest average (mean) profits.
+Mean profits generally increase as you move from the lower rating groups to group 7. After that, profits drop off for groups 8 and 9. So, in this given sample, the movies with the highest ratings don’t actually bring in the highest average (mean) profits.
 
 ### Step c
 
@@ -609,9 +630,9 @@ Many intervals are wide, showing that the estimates are uncertain. Movie profits
 Write an advice to settle the argument between Bob and Chantal. [4 points]
 
 **Your Answer:**
-Our results don’t settle the debate between Bob and Chantal. Movies in rating group 7 do best, pulling in an average profit of about $107.59 million. Groups 5 and 6 lag behind at $32.93 million and $66.89 million. If you call groups 5 and 6 “mediocre,” then Chantal’s claim doesn’t hold up.
 
-Still, it’s not as simple as higher ratings equal higher profits. Group 8 averages $51.48 million, and group 9 earns nothing at all. To be fair, group 8 has only 4 movies, and group 9 just one, so there’s not enough data to draw firm conclusions.
+Our results do not clearly show that either Bob or Chantal is right. Rating group 7 has the highest average profit, at about 107.59 million. Groups 5 and 6 have lower average profits of 32.93 million and 66.89 million. If we consider groups 5 and 6 to be mediocre, this does not support Chantal's claim in this sample.
 
-Here’s what we actually recommend: focus on making movies people like, but don’t expect that higher ratings alone bring bigger profits. Many things—budget, genre, marketing—can shift the numbers. Our data doesn’t prove that a “better” movie means higher profit. Also, the confidence intervals from step c only compare release years, not rating groups, so we can’t say if differences between the rating groups are statistically meaningful.
+However, higher ratings do not always go together with higher profits. Group 8 has an average profit of 51.48 million. Group 9 has a calculated average profit of zero, based on the recorded revenue and budget. Both values are zero for its only movie, so we cannot conclude that it actually earned nothing. Groups 8 and 9 contain only 4 movies and 1 movie, so we cannot draw strong conclusions about these groups.
 
+We advise the studio to make movies that audiences enjoy, but a higher rating does not guarantee more profit. Budget, genre and marketing may also matter. These results do not prove that better movies cause higher profits. The confidence intervals in step c compare release years, so they do not show whether differences between rating groups are statistically significant.

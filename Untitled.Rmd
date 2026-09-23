@@ -3,11 +3,9 @@ title: "QRM2"
 author: "Groepje 47"
 date: "2026-09-04"
 output:
-  pdf_document: default
-  word_document:
-    reference_docx: QRM2_opmaak.docx
+  pdf_document:
+    latex_engine: xelatex
     highlight: tango
-    pandoc_args: "--lua-filter=QRM2_opmaak.lua"
 ---
 
 ```{r setup, include=FALSE}

@@ -3,10 +3,11 @@ title: "QRM2"
 author: "Groepje 47"
 date: "2026-09-04"
 output:
+  pdf_document: default
   word_document:
-    reference_docx: "QRM2_opmaak.docx"
+    reference_docx: QRM2_opmaak.docx
     highlight: tango
-    pandoc_args: ["--lua-filter=QRM2_opmaak.lua"]
+    pandoc_args: "--lua-filter=QRM2_opmaak.lua"
 ---
 
 ```{r setup, include=FALSE}
@@ -26,12 +27,9 @@ Find the dataset “movies5.tsv” on Canvas. Describe your data set: How many o
 # Load the dataset
 movies <- read.delim("movies5.tsv")
 
-# Count the rows (observations)
 nrow(movies)
-# Count the columns (variables)
 ncol(movies)
 
-# Count the unique movies and identify them
 length(unique(movies$index))
 ```
 
@@ -53,15 +51,11 @@ Which of the following types of variables are present in your data set? (i) nomi
 # Show the variables and their data types
 str(movies)
 
-# Show the different genres
 unique(movies$genre)
 
-# Show the different ratings from lowest to highest
 sort(unique(movies$vote_average))
 
-# Show the first six release years
 head(movies$release_year)
-# Show the first six runtimes
 head(movies$runtime)
 ```
 
@@ -99,7 +93,6 @@ For each step, you should provide first all the code you used to answer the ques
 # Create profits variable
 movies$profits <- movies$revenue - movies$budget
 
-# Calculate mean/median/max/min
 
 mean(movies$profits)
 
@@ -119,12 +112,9 @@ We calculated profit by subtracting the budget from the revenue. The mean profit
 ```{r}
 # Movie with the highest profit and its profit
 movies$title[which.max(movies$profits)]
-# Show the highest profit
 max(movies$profits)
 
-# Movie with the lowest profit and its profit
 movies$title[which.min(movies$profits)]
-# Show the lowest profit
 min(movies$profits)
 ```
 
@@ -142,7 +132,6 @@ boxplot(movies$profits / 1000000,
         ylab = "Profit (millions)",
         col = "lightblue")
 
-# Summary of profits in the original monetary units
 summary(movies$profits)
 ```
 
@@ -162,7 +151,6 @@ movies$log_profits <- log(movies$profits)
 sum(movies$profits == 0)
 sum(movies$profits < 0)
 
-# Calculate the mean of log profits
 mean(movies$log_profits)
 ```
 
@@ -176,10 +164,8 @@ For movies with zero profit, taking the logarithm gives −Inf. For movies with 
 # Replace log profits with NA for non-positive profits
 movies$log_profits[movies$profits <= 0] <- NA
 
-# Calculate the mean, excluding missing values
 mean(movies$log_profits, na.rm = TRUE)
 
-# Create a boxplot of log profits
 boxplot(
   movies$log_profits,
   main = "Distribution of Log Movie Profits",
@@ -210,7 +196,6 @@ plot(
   col = rgb(0, 0.3, 0.7, 0.4)
 )
 
-# Calculate the correlation to support the interpretation
 cor(movies$runtime, movies$vote_average)
 ```
 
@@ -242,7 +227,6 @@ For which actor in your data set do you observe the most movies? [2 points]
 # Count the movies for each actor
 actor_counts <- table(movies$first_actor)
 
-# Show the highest counts first
 head(sort(actor_counts, decreasing = TRUE))
 ```
 
@@ -259,7 +243,6 @@ What is the average revenue of the movie in which this actor plays and does the 
 mean(movies$revenue[movies$first_actor == "Bruce Willis"],
      na.rm = TRUE)
 
-# Average revenue of all movies
 mean(movies$revenue, na.rm = TRUE)
 ```
 
@@ -299,7 +282,6 @@ population_variance <- mean(
   (movies$profits - mean(movies$profits))^2
 )
 
-# Show the population variance
 population_variance
 ```
 
@@ -315,10 +297,8 @@ Create a new data set, called movies_sample. Make sure that it is a random sampl
 # Make the random sample reproducible
 set.seed(47)
 
-# Select a random sample of 25 movies
 movies_sample <- movies[sample(nrow(movies), 25), ]
 
-# Calculate the sample variance
 var(movies_sample$profits)
 ```
 
@@ -336,18 +316,14 @@ In a for loop, create 100 different samples of 25 movies, as in b, and estimate 
 # Make the random samples reproducible
 set.seed(47)
 
-# Create space for 100 sample variances
 sample_vars <- numeric(100)
 
 # Take 100 samples and save their variances
 for (i in 1:100) {
-  # Select 25 movies at random for this sample
   movies_sample <- movies[sample(nrow(movies), 25), ]
-  # Save this sample variance in position i
   sample_vars[i] <- var(movies_sample$profits)
 }
 
-# Show the first six sample variances
 head(sample_vars)
 ```
 
@@ -365,13 +341,9 @@ Summarize and make a histogram of sample_vars. What is the mean, standard deviat
 # Summarize the sample variances
 summary(sample_vars)
 
-# Calculate the mean and standard deviation
-# Calculate the average of the sample variances
 mean(sample_vars)
-# Calculate the standard deviation of the sample variances
 sd(sample_vars)
 
-# Create a histogram
 hist(sample_vars,
      main = "Sample variances of movie profits",
      xlab = "Sample variance (squared millions)",
@@ -411,7 +383,6 @@ Create a new data set that only includes movies that are of the genre “Thrille
 # Create a dataset with only thriller movies
 movies_thriller <- subset(movies, genre == "Thriller")
 
-# Calculate the number of thrillers and their average runtime
 n_thriller <- nrow(movies_thriller)
 mean_runtime <- mean(movies_thriller$runtime)
 n_thriller
@@ -436,17 +407,14 @@ Now, assume that the variance of runtime amongst thriller movies in your data is
 # Use the sample variance as the known population variance
 population_variance_runtime <- var(movies_thriller$runtime)
 
-# Calculate the standard error
 standard_error_runtime <- sqrt(population_variance_runtime / n_thriller)
 
 # Critical z-value for a 99% confidence interval
 z_value <- 2.576
 
-# Calculate the lower and upper limits
 lower_runtime <- mean_runtime - z_value * standard_error_runtime
 upper_runtime <- mean_runtime + z_value * standard_error_runtime
 
-# Show the confidence interval
 c(lower_runtime, upper_runtime)
 ```
 
@@ -466,7 +434,6 @@ Using an appropriate five-step procedure, set up a test for the null hypothesis 
 # Number of movies
 n <- nrow(movies)
 
-# Variance of runtime in the sample
 sample_variance <- var(movies$runtime)
 
 # Calculate the chi-square test statistic
@@ -475,7 +442,6 @@ chi_square <- (n - 1) * sample_variance / 500
 # Critical values for a 5% two-sided test
 critical_values <- qchisq(c(0.025, 0.975), df = n - 1)
 
-# Show the results
 sample_variance
 chi_square
 critical_values
@@ -524,7 +490,6 @@ Create a new variable called vote_average_rounded. Make sure this variable is th
 # Remove decimals, following the examples in the question
 movies$vote_average_rounded <- floor(movies$vote_average)
 
-# Create a histogram with one bar for each whole-number rating
 hist(movies$vote_average_rounded,
      breaks = seq(-0.5, 10.5, by = 1),
      main = "Distribution of movie ratings",
@@ -532,7 +497,6 @@ hist(movies$vote_average_rounded,
      ylab = "Number of movies",
      col = "lightblue")
 
-# Count the movies in each rating group
 table(movies$vote_average_rounded)
 ```
 
@@ -550,10 +514,8 @@ Create a scatter plot with vote_average_rounded on the x axis and the mean of pr
 profits_by_rating <- aggregate(profits ~ vote_average_rounded,
                                data = movies, FUN = mean)
 
-# Show the mean profits for each rating group
 profits_by_rating
 
-# Create a scatterplot of rating groups and mean profits
 plot(profits_by_rating$vote_average_rounded,
      profits_by_rating$profits,
      main = "Average movie profits by rating",
@@ -562,7 +524,6 @@ plot(profits_by_rating$vote_average_rounded,
      pch = 19,
      col = "blue")
 
-# Show the rating group with the highest mean profit
 profits_by_rating[which.max(profits_by_rating$profits), ]
 ```
 
@@ -580,30 +541,24 @@ Recreate the scatter plot with year on the x axis and mean profits on the y-axis
 # List the release years from lowest to highest
 years <- sort(unique(movies$release_year))
 
-# Create space for the mean and confidence limits for each year
 mean_profits_year <- numeric(length(years))
 lower_profits_year <- numeric(length(years))
 upper_profits_year <- numeric(length(years))
 
 # Calculate the mean profit and 95% confidence interval for each year
 for (i in 1:length(years)) {
-  # Select the profits of movies released in this year
   year_profits <- movies$profits[movies$release_year == years[i]]
 
-  # Calculate the mean and standard error
   mean_profits_year[i] <- mean(year_profits)
   standard_error_year <- sd(year_profits) / sqrt(length(year_profits))
 
-  # Calculate the margin of error using the t-distribution
   margin_year <- qt(0.975, df = length(year_profits) - 1) *
     standard_error_year
 
-  # Save the lower and upper confidence limits
   lower_profits_year[i] <- mean_profits_year[i] - margin_year
   upper_profits_year[i] <- mean_profits_year[i] + margin_year
 }
 
-# Create the scatterplot, leaving room for all confidence intervals
 plot(years, mean_profits_year,
      main = "Average movie profits by release year",
      xlab = "Release year",

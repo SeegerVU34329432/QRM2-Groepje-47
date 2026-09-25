@@ -2,10 +2,17 @@
 title: "QRM2"
 author: "Groepje 47"
 date: "2026-09-04"
+documentclass: article
+papersize: a4
+fontsize: 10pt
+geometry: margin=1.5cm
 output:
   pdf_document:
     latex_engine: xelatex
     highlight: tango
+header-includes:
+  - \setlength{\parskip}{3pt}
+  - \AtBeginEnvironment{Shaded}{\small}
 ---
 
 ```{r setup, include=FALSE}

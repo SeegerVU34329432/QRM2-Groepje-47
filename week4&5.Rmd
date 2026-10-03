@@ -14,7 +14,19 @@ header-includes:
   - \setlength{\parskip}{3pt}
   - \AtBeginEnvironment{Shaded}{\small}
 ---
-Week 4
+
+```{r setup, include=FALSE}
+# Use the same clear layout for all graphs and code output
+knitr::opts_chunk$set(fig.width = 6.2, fig.height = 3.0,
+                      dpi = 200, collapse = TRUE, error = FALSE)
+options(width = 75)
+```
+```{r}
+# Load the dataset
+movies <- read.delim("movies5.tsv")
+```
+
+# Week 4
 1. There is another argument going on in the movie studio. Bob claims that production budgets are
 getting out of hand, and that the studio should focus on making cheaper movies. Chantal disagrees.
 She tells Bob that “Every dollar we spend on movie production is more than offset by the increase in
@@ -34,7 +46,9 @@ f. Which model has better fit? The level-level model or the log-log model? Expla
 g. Who do you think is correct? Bob or Chantal? What would you advise the movie studio to do? [2
 points]
 step a
-#WRITE YOUR CODE HERE
+# Week 4 - Question 1a: Bob vs. Chantal
+model_chantal <- lm(profits ~ budget, data = movies)
+summary(model_chantal)
 Your Answer:
 Write your formulated response here.
 step b
@@ -72,15 +86,17 @@ c. Now, have a close look at your data frame. Can you find any instances of male
 wrongly labeled as being female, or vice versa? What would such mislabelling mean for the coefficient
 you estimated under 2b? [2 points]
 step a
+#WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
 step b
+#WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
 step c
+#WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
-
 5 Week 5
 a. Create a plot of the mean profits by month of release. Do you see any indication that month of release
 matters to the profits of the movie? [2 points]
@@ -102,20 +118,25 @@ movie with a budget of 40,000,0000.
 f. Estimate a model that is able to predict the revenue of this movie. Give its predicted revenue and
 include a 99% prediction interval. [6 points]
 step a
+#WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
 step b
+#WRITE YOUR CODE HERE
 Your Answer:
-Write your formulated resphoonse here.
+Write your formulated response here.
 step c
+#WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
 step d
+#WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
 step e
+#WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
 step f
-
-
+#WRITE YOUR CODE HERE
+9

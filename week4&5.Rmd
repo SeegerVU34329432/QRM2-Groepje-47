@@ -47,20 +47,35 @@ g. Who do you think is correct? Bob or Chantal? What would you advise the movie 
 points]
 step a
 # Week 4 - Question 1a: Bob vs. Chantal
-model_chantal <- lm(profits ~ budget, data = movies)
-summary(model_chantal)
-Your Answer:
+library(tidyverse)
+movies <- read_tsv("movies5.tsv")
+movies <- movies %>% mutate(profit = revenue - budget)
+```{r}
+m1 <- lm(profit ~ budget, data = movies)
+summary(m1) 
+```
 Write your formulated response here.
 step b
 #WRITE YOUR CODE HERE
 Your Answer:
 Write your formulated response here.
 step c
-#WRITE YOUR CODE HERE
+```{r}
+t_val <- coef(summary(m1))["budget","t value"]
+pt(t_val, df = m1$df.residual, lower.tail = TRUE)   # one-sided p-value for H0: beta1 >= 0
+```
 Your Answer:
 Write your formulated response here.
 step d
-#WRITE YOUR CODE HERE
+```{r}
+movies <- movies %>%
+  mutate(log_profit = ifelse(revenue > 0, log(revenue), NA),
+         log_budget = ifelse(budget  > 0, log(budget),  NA))
+
+m2 <- lm(log_profit ~ log_budget, data = movies)
+summary(m2)
+```
+
 Your Answer:
 Write your formulated response here.
 step e
@@ -86,15 +101,33 @@ c. Now, have a close look at your data frame. Can you find any instances of male
 wrongly labeled as being female, or vice versa? What would such mislabelling mean for the coefficient
 you estimated under 2b? [2 points]
 step a
-#WRITE YOUR CODE HERE
+```{r}
+movies <- movies %>%
+  mutate(log_budget = ifelse(budget > 0, log(budget), NA))
+
+movies %>% filter(!is.na(log_budget), !is.na(first_actor_gender)) %>%
+  ggplot(aes(first_actor_gender, log_budget)) +
+  stat_summary(fun.data = mean_cl_normal, geom = "pointrange") +
+  labs(x = "First actor gender", y = "Mean log(budget)")
+```
+
 Your Answer:
 Write your formulated response here.
 step b
-#WRITE YOUR CODE HERE
+```{r}
+movies <- movies %>% mutate(first_actor_male = as.numeric(first_actor_gender == "male"))
+m3 <- lm(log_budget ~ first_actor_male, data = movies)
+summary(m3)
+```
+
 Your Answer:
 Write your formulated response here.
 step c
-#WRITE YOUR CODE HERE
+```{r}
+movies %>% filter(first_actor_gender == "female") %>% distinct(first_actor) %>% print(n = Inf)
+movies %>% filter(first_actor_gender == "male") %>% distinct(first_actor) %>% print(n = Inf)
+```
+
 Your Answer:
 Write your formulated response here.
 5 Week 5

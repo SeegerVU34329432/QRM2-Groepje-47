@@ -151,19 +151,48 @@ movie with a budget of 40,000,0000.
 f. Estimate a model that is able to predict the revenue of this movie. Give its predicted revenue and
 include a 99% prediction interval. [6 points]
 step a
-#WRITE YOUR CODE HERE
+```{r}
+library(tidyverse)
+movies <- read_tsv("movies5.tsv") %>%
+  mutate(profit = revenue - budget)
+
+movies %>%
+  group_by(release_month) %>%
+  summarise(mean_profit = mean(profit), se = sd(profit)/sqrt(n())) %>%
+  ggplot(aes(factor(release_month), mean_profit)) +
+  geom_pointrange(aes(ymin = mean_profit - 1.96*se, ymax = mean_profit + 1.96*se)) +
+  labs(x = "Release month", y = "Mean profit")
+```
+
 Your Answer:
 Write your formulated response here.
 step b
-#WRITE YOUR CODE HERE
+```{r}
+m <- movies %>% mutate(
+  log_profit = ifelse(revenue > 0, log(revenue), NA),
+  log_budget = ifelse(budget  > 0, log(budget),  NA),
+  english    = as.numeric(original_language == "en"))
+
+m5b <- lm(log_profit ~ log_budget + english + release_month, data = m)
+summary(m5b)
+```
+
 Your Answer:
 Write your formulated response here.
 step c
-#WRITE YOUR CODE HERE
+```{r}
+summary(m5b)$coefficients["release_month", ]
+```
+
 Your Answer:
 Write your formulated response here.
 step d
-#WRITE YOUR CODE HERE
+```{r}
+m5d <- lm(log_profit ~ log_budget + english + factor(release_month), data = m)
+m5d_restricted <- lm(log_profit ~ log_budget + english, data = m[!is.na(m$log_profit) & !is.na(m$log_budget), ])
+anova(m5d_restricted, m5d)          # joint F-test of all 11 month dummies
+```
+
 Your Answer:
 Write your formulated response here.
 step e
@@ -171,5 +200,13 @@ step e
 Your Answer:
 Write your formulated response here.
 step f
-#WRITE YOUR CODE HERE
-9
+```{r}
+m_pred <- m %>% mutate(thriller = as.numeric(genre == "Thriller"))
+mf <- lm(log_profit ~ log_budget + english + thriller, data = m_pred)
+summary(mf)
+
+new <- data.frame(log_budget = log(40000000), english = 1, thriller = 1)
+pr  <- predict(mf, new, interval = "prediction", level = 0.99)
+exp(pr)                       # back to dollars
+```
+

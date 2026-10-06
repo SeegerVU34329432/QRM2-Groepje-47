@@ -23,8 +23,11 @@ options(width = 75)
 ```
 ```{r}
 # Load the dataset
+library(tidyverse)
 movies <- read.delim("movies5.tsv")
 ```
+
+
 
 # Week 4
 1. There is another argument going on in the movie studio. Bob claims that production budgets are
@@ -47,12 +50,14 @@ g. Who do you think is correct? Bob or Chantal? What would you advise the movie 
 points]
 step a
 # Week 4 - Question 1a: Bob vs. Chantal
-library(tidyverse)
-movies <- read_tsv("movies5.tsv")
-movies <- movies %>% mutate(profit = revenue - budget)
+
 ```{r}
+# Calculate movie profits
+movies$profit <- movies$revenue - movies$budget
+
+# Estimate the regression
 m1 <- lm(profit ~ budget, data = movies)
-summary(m1) 
+summary(m1)
 ```
 Write your formulated response here.
 step b
@@ -68,24 +73,52 @@ Your Answer:
 Write your formulated response here.
 step d
 ```{r}
-movies <- movies %>%
-  mutate(log_profit = ifelse(revenue > 0, log(revenue), NA),
-         log_budget = ifelse(budget  > 0, log(budget),  NA))
+# Create log variables
+movies$log_profit <- NA_real_
+movies$log_budget <- NA_real_
 
+# Select movies with positive profit, revenue and budget
+valid <- with(movies, which(
+  profit > 0 & revenue > 0 & budget > 0
+))
+
+movies$log_profit[valid] <- log(movies$profit[valid])
+
+# Calculate log budget for positive budgets
+valid_budget <- which(movies$budget > 0)
+movies$log_budget[valid_budget] <-
+  log(movies$budget[valid_budget])
+
+# Estimate the log-log model
 m2 <- lm(log_profit ~ log_budget, data = movies)
 summary(m2)
 ```
-
 Your Answer:
-Write your formulated response here.
+We estimated a regression of log profit on log budget. The estimated intercept is 7.64769 and the coefficient of log budget is 0.58680. The model uses 463 movies with positive profits and budgets. Its R-squared is 0.271, meaning that the model explains approximately 27.1% of the variation in log profit among these movies.
 step e
-#WRITE YOUR CODE HERE
+```{r}
+coef(m2)["log_budget"]
+```
 Your Answer:
-Write your formulated response here.
+The estimated coefficient of log budget is 0.58680. Since this is a log-log model, a 1% higher budget is associated with approximately 0.59% higher profit, on average. This relationship applies to the movies included in the model and does not prove that increasing a movie’s budget causes its profit to increase.
+
 step f
-#WRITE YOUR CODE HERE
+```{r}
+# R-squared of the level-level model
+summary(m1)$r.squared
+
+# R-squared of the log-log model
+summary(m2)$r.squared
+
+# Number of observations used in each model
+nobs(m1)
+nobs(m2)
+```
 Your Answer:
-Write your formulated response here.
+The first model explains about 32.3% of the variation in profit. The second model explains about 27.1% of the variation in log profit.
+
+The first model has a higher R-squared, but this does not necessarily mean it fits better. One model uses profit, while the other uses log profit. The first model also uses 909 movies, compared with 463 in the second model. Because of these differences, we cannot decide which model fits better just by comparing their R-squared values.
+
 7
 step g
 #WRITE YOUR CODE HERE

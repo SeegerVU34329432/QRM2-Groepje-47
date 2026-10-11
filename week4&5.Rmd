@@ -2,22 +2,21 @@
 title: "QRM2"
 author: "Alicia Djidda (2865518), Gijs Stevens (2811736), Seeger Tromp (2889983)"
 date: "2026-10-11"
-documentclass: article
-papersize: a4
-fontsize: 10pt
-geometry: margin=1.5cm
 output:
+  html_document:
+    df_print: paged
   pdf_document:
     latex_engine: xelatex
     highlight: tango
-header-includes:
-  - \setlength{\parskip}{3pt}
-  - \AtBeginEnvironment{Shaded}{\small}
+papersize: a4
+fontsize: 10pt
+geometry: margin=1.5cm
+documentclass: article
 ---
 
 ```{r setup, include=FALSE}
-# Use the same layout for all graphs and code output
-knitr::opts_chunk$set(fig.width = 6.2, fig.height = 3.0,
+# graph settings
+knitr::opts_chunk$set(fig.width = 6.2, fig.height = 2.6,
                       dpi = 200, collapse = TRUE, error = FALSE)
 options(width = 75)
 ```
@@ -37,17 +36,17 @@ Set up a regression model to test Chantal's claim, and estimate it. That is, est
 Print a summary of your estimated model. [2 points]
 
 ```{r}
-# Load the dataset and calculate profit in dollars
+# load data
 movies <- read.delim("movies5.tsv")
 movies$profit <- movies$revenue - movies$budget
-
+# fit the model
 m1 <- lm(profit ~ budget, data = movies)
 summary(m1)
 ```
 
 **Your Answer:**
 
-We estimated a linear regression with profit as the dependent variable and budget as the independent variable. Both are measured in dollars. The estimated model is: predicted profit = -3,307,162.73 + 1.8301 times budget. The model uses all 909 movies.
+We have estimated a linear regression to see how budget is related to profit, profit is the dependent variable and budget is the independent variable. they are both measured in dollars. The model estimates: predicted profit = -3,307,162.73 + 1.8301 x budget. The model uses all 909 movies that were given in the dataset. 
 
 \newpage
 
@@ -55,28 +54,28 @@ We estimated a linear regression with profit as the dependent variable and budge
 
 What is the estimated value of $\beta_1$ and how do you interpret it? [2 points]
 
-```{r}
-coef(m1)["budget"]
-```
-
 **Your Answer:**
 
-The estimated coefficient is 1.8301. A one-dollar higher budget is associated with approximately 1.83 dollars higher predicted profit, on average. Profit already equals revenue minus budget. This relationship does not prove that spending an extra dollar causes profit to increase by this amount.
+The estimated coefficient is 1.8301, as we calculated in step a. A one-dollar higher budget means the predicted profit is 1.83 dollars higher on average. This relationship doesn't prove that spending an extra dollar will cause profit to increase by this amount.
 
 ### Step c
 
 Test for the null hypothesis that $\beta_1 \geq 0$. Report the p-value and state your conclusion. [2 points]
 
 ```{r}
-# Use the lower tail because the alternative is beta_1 < 0
-t_value <- summary(m1)$coefficients["budget", "t value"]
-p_value <- pt(t_value, df = df.residual(m1))
+# get the t-value
+model_results <- summary(m1)
+coefficient_table <- model_results$coefficients
+t_value <- coefficient_table["budget", "t value"]
+# find the p-value
+degrees_freedom <- df.residual(m1)
+p_value <- pt(t_value, df = degrees_freedom)
 p_value
 ```
 
 **Your Answer:**
 
-The null hypothesis is H0: beta_1 >= 0, and the alternative is H1: beta_1 < 0. We use a 5% significance level. The t-value is approximately 20.80, and the one-sided p-value is approximately 1. We therefore do not reject H0. There is no evidence of a negative relationship. This test does not establish that beta_1 is greater than 1.
+The null hypothesis is H0: beta_1 >= 0, and the alternative hypothesis is H1: beta_1 < 0. In this case we use a 5% significance level. The t-value is approximately 20.80, and the one-sided p-value is approximately 1. the p-value is around 1, which is much greater then 0.05, so we can not reject the null hypothesis.. There is no evidence to be found of a negative relationship between profit and budget This test does not establish that beta_1 is greater than 1, only if its below 0. 
 
 \newpage
 
@@ -89,37 +88,35 @@ Next, estimate the model:
 When creating the variables Log Profits and Log Budget, make sure that movies with a Revenue or Budget of zero are assigned the value "NA". Print a summary of your estimated model. [2 points]
 
 ```{r}
-# Leave zero revenue or budget as NA in both log variables
+# make log values
 movies$log_profit <- NA
 movies$log_budget <- NA
 valid_budget <- movies$budget > 0 & movies$revenue > 0
 movies$log_budget[valid_budget] <- log(movies$budget[valid_budget])
-
-# Log profit also requires a positive profit
+# keep positive profit
 valid_profit <- valid_budget & movies$profit > 0
 movies$log_profit[valid_profit] <- log(movies$profit[valid_profit])
-
 m2 <- lm(log_profit ~ log_budget, data = movies)
 summary(m2)
 ```
 
 **Your Answer:**
 
-We used natural logarithms. Both log variables are NA when revenue or budget is zero. Log profit is also NA when profit is zero or negative, because these values do not have a finite real logarithm.
+We used log() in R to calculate the natural logarithms of profit as well as the budget. When revenue or budge is zero, we set both log values to NA, so they don't intervere with the calculations. We also set log profit to NA when profit is zero or negative, because we cannot calculate a usable logarithm for such values (Na). 
 
-The estimated intercept is 7.64769 and the coefficient of log budget is 0.58680. The model uses 463 movies with positive profit, revenue and budget. Its R-squared is 0.271, so it explains approximately 27.1% of the variation in log profit among these movies.
+The estimated model is:
+
+Predicted log profit = 7.64769 + 0.58680 × log budget.
+
+R leaves out movies with missing log values, so the model uses 463 movies (out of the total 909 movies) The R-squared is 0.271. This means the model explains about 27.1% of the differences in log profit between these movies with log values that can actually be calculated. 
 
 ### Step e
 
 What is the estimated value of $\beta_1$ and how do you interpret it? [2 points]
 
-```{r}
-coef(m2)["log_budget"]
-```
-
 **Your Answer:**
 
-The estimated coefficient of log budget is 0.58680. Since this is a log-log model, a 1% higher budget is associated with approximately 0.59% higher profit. This relationship applies to the movies included in the model and does not prove that increasing a movie's budget causes its profit to increase.
+The estimated coefficient of log budget (beta_1) is 0.58680, we calculated this in step d. we used logs for both budged and profit, a 1% higher budget is associated with approximately 0.59% higher profits.  This relationship applies to the movies included in the model, where calculations were possible. Here we can find that it does not prove that increasing a movie's budget causes its profit to increase
 
 \newpage
 
@@ -128,30 +125,33 @@ The estimated coefficient of log budget is 0.58680. Since this is a log-log mode
 Which model has better fit? The level-level model or the log-log model? Explain. [2 points]
 
 ```{r}
-c(level_level = summary(m1)$r.squared,
-  log_log = summary(m2)$r.squared)
+# compare model fit
+summary(m1)$r.squared
+summary(m2)$r.squared
 ```
 
 **Your Answer:**
 
-The first model explains about 32.3% of the variation in profit. The second model explains about 27.1% of the variation in log profit.
+The first model explains about 32.3 percent of the variation in profit, And the second model explains about 27.1% of the variation in log) profit.
 
-The first model has a higher R-squared, but this does not necessarily mean it fits better. One model uses profit, while the other uses log profit. The first model also uses 909 movies, compared with 463 in the second model. Because of these differences, we cannot decide which model fits better just by comparing their R-squared values.
+The first model has a higher R-squared , but this does not necessarily mean it fits better, because there are differences: One model uses profit, while the other uses log profit. The first model also uses 909 movies, compared with 463 in the second model. 
+Because of these differences between the models, it is not possible to decide which model fits better just by comparing their R-squared values.
+
 
 ### Step g
 
 Who do you think is correct? Bob or Chantal? What would you advise the movie studio to do? [2 points]
 
 ```{r}
-# Check whether the 95% confidence interval is above 1
-confint(m1, "budget", level = 0.95)
+# find the 95% interval
+confint(m1, "budget")
 ```
 
 **Your Answer:**
 
-The level-level model supports Chantal's claim as a relationship: one dollar higher budget is associated with about 1.83 dollars higher profit. The usual 95% confidence interval for the coefficient is 1.66 to 2.00, entirely above 1. The log model also shows a positive relationship, but its coefficient measures percentage changes rather than dollars.
+Our results support Chantal more than it does Bob. The level-level model shows that a one-dollar higher budget is associated with about/around 1.83 dollars higher predicted profit. The 95% confidence interval is from 1.66 to 2.00. This entire interval is above 1, which helps to supporrt the claim of chantal.  The log-log model does also shows a positive relationship, but it measures the changes in percentages instead of dollars as before. 
 
-However, neither model proves that increasing a movie's budget causes higher profit. Genre, audience demand and other factors may affect both. We advise the studio to consider each movie's expected costs and revenue, rather than always choosing cheaper movies or assuming that every extra dollar will pay off.
+However, the models do not prove that spending more causes higher profit. Other different factors, such as genre and audience demand, may affect both the budget and the profit. We advise the movie studio to compare the expected costs and revenue of each movie before choosing what the budget shoudl be. It should not always choose cheaper movies or assume that every extra dollar will lead to more profit, because this is not guaranteed.  
 
 \newpage
 
@@ -162,16 +162,15 @@ However, neither model proves that increasing a movie's budget causes higher pro
 Make a plot with a 95% confidence interval with the mean log of budget on the y-axis, and whether the first actor of the movie is male or female on the x-axis. What do you conclude? [2 points]
 
 ```{r}
-# For this question, use all positive budgets
+# use positive budgets
 movies$log_budget <- NA
 positive_budget <- movies$budget > 0
 movies$log_budget[positive_budget] <- log(movies$budget[positive_budget])
-
+# compare the groups
 groups <- c("female", "male")
 mean_log_budget <- numeric(2)
 lower_budget <- numeric(2)
 upper_budget <- numeric(2)
-
 for (i in 1:2) {
   group_budget <- movies$log_budget[
     movies$first_actor_gender == groups[i]]
@@ -181,7 +180,7 @@ for (i in 1:2) {
   lower_budget[i] <- interval[1]
   upper_budget[i] <- interval[2]
 }
-
+# draw the graph
 plot(1:2, mean_log_budget,
      main = "Mean log budget by first actor gender",
      xlab = "First actor gender", ylab = "Mean log budget",
@@ -189,17 +188,17 @@ plot(1:2, mean_log_budget,
      ylim = range(lower_budget, upper_budget),
      pch = 19, col = "blue")
 axis(1, at = 1:2, labels = c("Female", "Male"))
-
-# Add the 95% confidence intervals
 arrows(1:2, lower_budget, 1:2, upper_budget,
        angle = 90, code = 3, length = 0.08, col = "blue")
 ```
 
 **Your Answer:**
 
-The mean log budget is 16.62 for the female group and 16.92 for the male group. The 95% confidence intervals are approximately 16.38 to 16.86 and 16.77 to 17.06. The male group has a higher mean log budget. The intervals overlap, but this alone does not tell us whether the difference is statistically significant.
+Movies with a female first actor have an average log budget of 16.62. For movies with a male first actor, it is higher than the females; 16.92. The 95% confidence intervals are 16.38–16.86 for the female group, and 16.77–17.06 for the male group.
 
-For this separate question, we use all movies with a positive budget and a recorded first actor gender. We do not require positive revenue, because this model only concerns budget and gender.
+The male group has a much higher average log budget. The intervals do overlap, but we need a actual statistical test to check whether or not the difference is significant or not. 
+
+extra; We include movies with a budget above zero and a recorded first actor gender . Revenue does not need to be above zero because this question only looks at budget and gender, and so revenue is not important here. 
 
 \newpage
 
@@ -212,34 +211,41 @@ Estimate the following simple OLS model:
 Is the estimated coefficient for $\beta_1$ significantly different from zero? How do you interpret its estimate, and how does this relate to your conclusion in 2a? [2 points]
 
 ```{r}
-# Code male as 1 and female as 0; missing values remain NA
-movies$first_actor_male <- as.numeric(movies$first_actor_gender == "male")
+# make male equal to 1
+is_male <- movies$first_actor_gender == "male"
+movies$first_actor_male <- as.numeric(is_male)
+# compare budgets
 m3 <- lm(log_budget ~ first_actor_male, data = movies)
 summary(m3)
-
-# Convert the log difference into a percentage difference
-100 * (exp(coef(m3)["first_actor_male"]) - 1)
+# change to percent
+budget_ratio <- exp(0.2963)
+percentage_difference <- (budget_ratio - 1) * 100
+percentage_difference
 ```
 
 **Your Answer:**
 
-The coefficient is 0.2963, with a p-value of approximately 0.0457. We reject H0: beta_1 = 0 against H1: beta_1 is not zero at the 5% significance level. The model uses 704 movies: 178 in the female group and 526 in the male group.
+The coefficient is 0.2963. The p-value is 0.0457, that is below 0.05. We therefore reject the null hypothesis that beta_1 equals zero. The difference between the two groups is statistically significant at the level of 5%.  We used 704 movies in total, 178 with a female first actor and 526 with a male first actor.
 
-The male group has a mean log budget that is 0.2963 higher. This corresponds to a geometric mean budget about 34.49% higher. The direction agrees with the plot in step a. The regression finds a significant difference even though the separate confidence intervals overlap. It does not prove that the first actor's gender causes higher budgets.
+The average log budget is 0.2963 higher for the male group. This means that the geometric mean budget is about 34.49% higher than for the female group. In step a we also saw a higher average log budget for the male group, so the results do agree. The confidence intervals actually overlap, but the test still shows a actual significant difference. We are not able to say that having a male first actor causes a higher budget.
 
 ### Step c
 
 Now, have a close look at your data frame. Can you find any instances of male first actors who are wrongly labelled as being female, or vice versa? What would such mislabelling mean for the coefficient you estimated under 2b? [2 points]
 
 ```{r}
-# Show two examples of incorrect labels in the original data
-unique(movies[movies$first_actor %in% c("Morgan Freeman", "Jackie Chan"),
-              c("first_actor", "first_actor_gender")])
+# check actor labels
+morgan_movies <- movies[movies$first_actor == "Morgan Freeman", ]
+morgan_labels <- morgan_movies[, c("first_actor", "first_actor_gender")]
+unique(morgan_labels)
+jackie_movies <- movies[movies$first_actor == "Jackie Chan", ]
+jackie_labels <- jackie_movies[, c("first_actor", "first_actor_gender")]
+unique(jackie_labels)
 ```
 
 **Your Answer:**
 
-Morgan Freeman and Jackie Chan are male actors but are labelled female in the dataset. Incorrect labels put movies in the wrong group and can bias the coefficient. If the mistakes are unrelated to budget within each true gender group, they generally make the estimated difference smaller. Otherwise, the bias can go either way. The results above use the original labels, so we should check them before drawing strong conclusions.
+Morgan Freeman and Jackie Chan are men, but they are labelled as women in the dataset. Their movies are put in the wrong group (male/female group), this can affect the coefficient from step b and make it misleading because wrongly labelled groups. If these mistakes are not related to budget within each actual gender group, they usually mak estimated difference smaller. Otherwise, the difference could become either smaller or become larger. We did use the original labels, so we should check them before trusting the results.
 
 \newpage
 
@@ -252,23 +258,30 @@ Morgan Freeman and Jackie Chan are male actors but are labelled female in the da
 Create a plot of the mean profits by month of release. Do you see any indication that month of release matters to the profits of the movie? [2 points]
 
 ```{r}
-# Calculate the mean profit for each release month
+# find monthly averages
 profits_by_month <- aggregate(profit ~ release_month,
                              data = movies, FUN = mean)
-
+profits_by_month$profit_millions <- profits_by_month$profit / 1000000
+# draw the graph
 plot(profits_by_month$release_month,
-     profits_by_month$profit / 1000000,
-     type = "b", pch = 19, col = "blue", xaxt = "n",
+     profits_by_month$profit_millions,
+     type = "b",
+     pch = 19,
+     col = "blue",
+     xaxt = "n",
      main = "Average movie profit by release month",
-     xlab = "Release month", ylab = "Mean profit (millions)")
+     xlab = "Release month",
+     ylab = "Mean profit (millions)")
 axis(1, at = 1:12, labels = month.abb, cex.axis = 0.8)
-
-profits_by_month[which.max(profits_by_month$profit), ]
+profits_by_month
 ```
 
 **Your Answer:**
 
-Mean profit differs across months. June has the highest mean (~$123.49M) and September the lowest (~$16.98M). The fluctuation suggests release month matters, but the plot alone doesn't prove causality, as movies released in different months may also differ in budget and genre.
+Mean profit differs between release months. June has the highest mean profit, at about 123.49 million, followed by November at 105.28 million. ANnd September has the lowest mean profit, which is about 16.98 million.
+
+The pattern goes up and down rather than steadily incresing throughout the year. This suggests that release month may matter, but the plot alone does not prove this,. Movies released in different months may also differ in budget, genre and other characteristics, which can also effect the profit. 
+
 \newpage
 
 ### Step b
@@ -276,13 +289,15 @@ Mean profit differs across months. June has the highest mean (~$123.49M) and Sep
 Estimate an OLS model which has as dependent variable the log of profits of a movie, and as independent variables the log of budget, a dummy for whether the movie was released in English or not, and a linear term for the month of release. Show a summary of the resulting model and interpret each coefficient. [4 points]
 
 ```{r}
-# Code English as 1 and other languages as 0
-movies$english <- as.numeric(movies$original_language == "en")
-
-# Use the same complete sample for the models in steps b to e
-model_data <- movies[complete.cases(movies[,
-  c("log_profit", "log_budget", "english", "release_month")]), ]
-
+# make english equal to 1
+is_english <- movies$original_language == "en"
+movies$english <- as.numeric(is_english)
+# keep complete rows
+needed_variables <- movies[, c("log_profit", "log_budget",
+                              "english", "release_month")]
+complete_movies <- complete.cases(needed_variables)
+model_data <- movies[complete_movies, ]
+# fit the model
 m5b <- lm(log_profit ~ log_budget + english + release_month,
           data = model_data)
 summary(m5b)
@@ -290,26 +305,29 @@ summary(m5b)
 
 **Your Answer:**
 
-The model uses 463 movies. Holding other variables constant:
-Intercept (6.9683): Predicted log profit for a non-English movie with a $1 budget and release month zero (practically meaningless).
-Log Budget (0.5770): A 1% higher budget is associated with about 0.58% higher profit.
-English (0.7214): English movies have a predicted log profit 0.7214 higher (~105.72% higher geometric mean profit).
-Release Month (0.0211): Moving one month later is associated with about 2.13% higher profit.
-These are associations, not causal effects.
+The model uses 463 movies with positive profit and budget. When explaining each coefficient, we keep the other variables the same.
+
+The intercept is 6.9683. This is the predicted log profit for a non-nglish movie with a budget of one dollar,which was released in month zero. month zero does not exist, so this has no actual practical meaning.
+
+The log budget coefficient is 0.5770. A 1% higher budget is linked to about 0.58% higher profit.
+
+The English coefficient is 0.7214. English movies have a predicted log profit that is 0.7214 higher than non-English movies. Their geometric mean profit iss therefore about 105.72% higher. we calculate this percentage using 100 × (exp(coefficient) − 1), with the full, unrounded coefficient.,
+The release month coefficient is 0.0211. A release one month later in the same year is linked to about 2.13% higher profit. The model assumes the same percentage increase for each additional month.
+
+These results do show relationships between profits and other variables, but do not prove that changing budget, language or release month causes profit to change.
 
 ### Step c
 
 Test for the hypothesis that the coefficient that belongs to month of release is zero. [2 points]
 
 ```{r}
+# test the month effect
 summary(m5b)$coefficients["release_month", ]
 ```
 
 **Your Answer:**
 
-The null hypothesis is H0: beta_month = 0. With t = 1.147 and p = 0.2519, 
-we do not reject H0 at the 5% level. There is no statistically significant 
-linear month trend in this model, though a non-linear pattern is not ruled out.
+The null hypothesis is: beta_month = 0, and the alternative hypothesis is H1: beta_month is not zero. The t-value is around 1.147 and the p-value is 0.2519. Since this is higher than 0.05, we do not reject H0. There is no statistically significant linear month trend in this model, and this does not rule out an non-linear pattern across months
 
 \newpage
 
@@ -318,12 +336,14 @@ linear month trend in this model, though a non-linear pattern is not ruled out.
 Based on your plot in a, do you consider the choice that month of release enters the model linearly under b reasonable? Estimate a specification that allows for a more flexible curve. In this new specification, test for the null hypothesis that month of release does not impact profits. This might require testing multiple terms at once. [4 points]
 
 ```{r}
-# Treat month as a category, with January as the reference month
-m5d <- lm(log_profit ~ log_budget + english + factor(release_month),
+# make month groups
+model_data$month_group <- factor(model_data$release_month)
+# fit the model
+m5d <- lm(log_profit ~ log_budget + english + month_group,
           data = model_data)
-summary(m5d)$coefficients
-
-# Jointly test all 11 month coefficients using the same movies
+model_results <- summary(m5d)
+model_results$coefficients
+# compare both models
 m5d_restricted <- lm(log_profit ~ log_budget + english,
                      data = model_data)
 anova(m5d_restricted, m5d)
@@ -331,11 +351,8 @@ anova(m5d_restricted, m5d)
 
 **Your Answer:**
 
-A linear trend poorly captures the seasonal rise and fall, so we treat month categorically with January as the reference category.
-To test whether months jointly impact profits (H 
-0
- : all 11 month coefficients equal zero), the joint F-test gives F(11,449)=1.71 (p=0.0679). We do not reject H 
-0  at the 5% level; the evidence is insufficient to conclude that months jointly improve the model after controlling for budget and language.
+A linear month effect does not describe the plot well because profit rises and falls across the year. So we treat month as a category. January is the reference month, and the other 11 months each have their own coefficient. This does allow a separate pattern for each month.
+The null hypothesis is that all 11 month coefficients equal zero. The alternative is that at least one is not zero. The joint F-test gives F(11, 449) = 1.7127 and p = 0.0679. At the 5% significance level, we do not reject H0. There is not enough evidence that month categories improve the model beyond budget and language. Thiss does not prove that release month is unrelated to the profit.
 
 \newpage
 
@@ -344,16 +361,22 @@ To test whether months jointly impact profits (H
 One executive at the studio wants to time the release of the movie to a specific month of the year such that they can maximize revenue. Based on your model under d, what would you advise the movie studio regarding the timing of the release of the movie? [2 points]
 
 ```{r}
-# Compare months while keeping budget and language the same
+# compare all months
 month_options <- data.frame(log_budget = mean(model_data$log_budget),
-                            english = 1, release_month = 1:12)
+                            english = 1,
+                            month_group = factor(1:12,
+                              levels = levels(model_data$month_group)))
+# predict log profit
 predicted_log_profit <- predict(m5d, newdata = month_options)
 month.name[which.max(predicted_log_profit)]
 ```
 
 **Your Answer:**
-June yields the highest predicted log profit holding budget and language constant. However, because the joint test in step d is not significant at 5%, we cannot confidently recommend June as the definitive optimal month.
-Furthermore, the model predicts log profit rather than revenue, and relies on historical data. Studios should weigh June against competition, audience demand, and genre.
+
+June has the highest predicted log profit when budget and language are being held constant. However, the joint test in step d is not significant at 5%, so we are not able to confidently recommend June as the 'best' month. The pattern is also based = on only the movies with positive profits and budgets.
+
+The model predicts log profit, not directly revenue. For a fixed budget, higher profit also means higher revenue, but this does not prove that moving a release to June will actuallyincrease revenue. We would consider June as one option while also looking at competition, audience demand and the type of movie. So when looking at maximalising profits, multiple variables should be taken into consideration. 
+
 \newpage
 
 ### Step f
@@ -363,20 +386,18 @@ The movie studio that you work at is releasing a new movie in 2026. It will be a
 Estimate a model that is able to predict the revenue of this movie. Give its predicted revenue and include a 99% prediction interval. [6 points]
 
 ```{r}
-# Predict revenue, including movies that did not make a profit
+# use positive revenue and budget
 revenue_data <- subset(movies, revenue > 0 & budget > 0)
 revenue_data$log_revenue <- log(revenue_data$revenue)
 revenue_data$thriller <- as.numeric(revenue_data$genre == "Thriller")
-
+# fit the model
 m5f <- lm(log_revenue ~ log_budget + english + thriller + release_year,
           data = revenue_data)
 summary(m5f)
-
-# Use a budget of 40 million, as in our original code
+# add the new movie
 new_movie <- data.frame(log_budget = log(40000000), english = 1,
                         thriller = 1, release_year = 2026)
-
-# Predict one movie and convert the result back to dollars
+# predict revenue
 prediction_log <- predict(m5f, newdata = new_movie,
                            interval = "prediction", level = 0.99)
 exp(prediction_log)
@@ -384,8 +405,8 @@ exp(prediction_log)
 
 **Your Answer:**
 
-Using a $40M budget, English language, Thriller genre, and 2026 release year across 629 movies:
-Predicted Revenue: Approximately $100.78 million (median prediction).
-99% Prediction Interval: Approximately $2.11 million to $4,809.18 million.
-The interval is extremely wide, reflecting high uncertainty. This relies on log-normal error assumptions and assumes relationships from 1990–2016 hold in 2026.
+We estimated log revenue using log budget, English language, Thriller genre and last of all release year. The model uses 629 movies with positive revenue and budget, including movies that did make a loss.
 
+For the English-spoken Thriller released in 2026, After converting the prediction back to dollars the revenue prediction is approx. 100.78 million dollars. This is the model's predicted median revenue, rather than its average revenue. The 99% prediction interval for this individual movie is around 2.11 million to 4,809.18 million dollars. We did used a prediction interval, and not an confidence interval for the calculation of the average revenue.
+
+The interval is very wide, so the prediction is quite uncertain. It relies on the regression assumptions, including approximately normal errors with an constant variance on the log scale. Our data covers from 1990 to 2016, so using the model for 2026 also assumes that the estimated relationship continues beyond the actual observed years of the model. So when using this model outside of the observed years bring uncertaincy. 

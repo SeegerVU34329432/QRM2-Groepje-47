@@ -268,10 +268,7 @@ profits_by_month[which.max(profits_by_month$profit), ]
 
 **Your Answer:**
 
-Mean profit differs between release months. June has the highest mean profit, at about 123.49 million, followed by November at 105.28 million. September has the lowest mean profit, at about 16.98 million.
-
-The pattern goes up and down rather than increasing steadily throughout the year. This suggests that release month may matter, but the plot alone does not prove this. Movies released in different months may also differ in budget, genre and other characteristics.
-
+Mean profit differs across months. June has the highest mean (~$123.49M) and September the lowest (~$16.98M). The fluctuation suggests release month matters, but the plot alone doesn't prove causality, as movies released in different months may also differ in budget and genre.
 \newpage
 
 ### Step b
@@ -293,15 +290,12 @@ summary(m5b)
 
 **Your Answer:**
 
-The model uses 463 movies with positive profit and budget. Each coefficient is interpreted while holding the other variables constant.
-
-The intercept is 6.9683. It is the predicted log profit for a non-English movie with a one-dollar budget and release month zero. Since month zero does not exist, this has no useful practical interpretation.
-
-The log budget coefficient is 0.5770. A 1% higher budget is associated with approximately 0.58% higher profit.
-
-The English coefficient is 0.7214. English movies have a predicted log profit that is 0.7214 higher than non-English movies. This corresponds to about 105.72% higher geometric mean profit, using 100 times (exp(0.7214) - 1), with the unrounded coefficient.
-
-The release month coefficient is 0.0211. Moving one month later in the same calendar year is associated with approximately 2.13% higher profit. These relationships do not prove that changing budget, language or release month causes profit to change.
+The model uses 463 movies. Holding other variables constant:
+Intercept (6.9683): Predicted log profit for a non-English movie with a $1 budget and release month zero (practically meaningless).
+Log Budget (0.5770): A 1% higher budget is associated with about 0.58% higher profit.
+English (0.7214): English movies have a predicted log profit 0.7214 higher (~105.72% higher geometric mean profit).
+Release Month (0.0211): Moving one month later is associated with about 2.13% higher profit.
+These are associations, not causal effects.
 
 ### Step c
 
@@ -313,7 +307,9 @@ summary(m5b)$coefficients["release_month", ]
 
 **Your Answer:**
 
-The null hypothesis is H0: beta_month = 0, and the alternative is H1: beta_month is not zero. The t-value is approximately 1.147 and the p-value is 0.2519. Since this is above 0.05, we do not reject H0. There is no statistically significant linear month trend in this model. This does not rule out a non-linear pattern across months.
+The null hypothesis is H0: beta_month = 0. With t = 1.147 and p = 0.2519, 
+we do not reject H0 at the 5% level. There is no statistically significant 
+linear month trend in this model, though a non-linear pattern is not ruled out.
 
 \newpage
 
@@ -335,9 +331,11 @@ anova(m5d_restricted, m5d)
 
 **Your Answer:**
 
-A linear month effect does not describe the plot well because profit rises and falls across the year. We therefore treat month as a category. January is the reference month, and the other 11 months each have their own coefficient. This allows a separate pattern for each month.
-
-The null hypothesis is that all 11 month coefficients equal zero. The alternative is that at least one is not zero. The joint F-test gives F(11, 449) = 1.7127 and p = 0.0679. At the 5% significance level, we do not reject H0. The evidence is not strong enough to conclude that the months jointly improve the model, after accounting for budget and language. Both models use the same 463 movies.
+A linear trend poorly captures the seasonal rise and fall, so we treat month categorically with January as the reference category.
+To test whether months jointly impact profits (H 
+0
+ : all 11 month coefficients equal zero), the joint F-test gives F(11,449)=1.71 (p=0.0679). We do not reject H 
+0  at the 5% level; the evidence is insufficient to conclude that months jointly improve the model after controlling for budget and language.
 
 \newpage
 
@@ -354,11 +352,8 @@ month.name[which.max(predicted_log_profit)]
 ```
 
 **Your Answer:**
-
-June has the highest predicted log profit when budget and language are held constant. However, the joint test in step d is not significant at 5%, so we cannot confidently recommend June as the best month. The pattern is also based only on movies with positive profits and budgets.
-
-The model predicts log profit, not revenue directly. For a fixed budget, higher profit also means higher revenue, but this does not prove that moving a release to June will increase revenue. We would consider June as one option while also looking at competition, audience demand and the type of movie.
-
+June yields the highest predicted log profit holding budget and language constant. However, because the joint test in step d is not significant at 5%, we cannot confidently recommend June as the definitive optimal month.
+Furthermore, the model predicts log profit rather than revenue, and relies on historical data. Studios should weigh June against competition, audience demand, and genre.
 \newpage
 
 ### Step f
@@ -389,8 +384,8 @@ exp(prediction_log)
 
 **Your Answer:**
 
-We interpret the budget written as "40,000,0000" as 40 million dollars, as in our original code. We estimated log revenue using log budget, English language, Thriller genre and release year. The model uses 629 movies with positive revenue and budget, including movies that made a loss.
+Using a $40M budget, English language, Thriller genre, and 2026 release year across 629 movies:
+Predicted Revenue: Approximately $100.78 million (median prediction).
+99% Prediction Interval: Approximately $2.11 million to $4,809.18 million.
+The interval is extremely wide, reflecting high uncertainty. This relies on log-normal error assumptions and assumes relationships from 1990–2016 hold in 2026.
 
-For the English-spoken Thriller released in 2026, the back-transformed revenue prediction is approximately 100.78 million dollars. This is the model's predicted median revenue, rather than its arithmetic mean. The 99% prediction interval for this individual movie is approximately 2.11 million to 4,809.18 million dollars. We used a prediction interval, not a confidence interval for the average revenue.
-
-The interval is very wide, so the prediction is uncertain. It relies on the regression assumptions, including approximately normal errors with constant variance on the log scale. Our data cover 1990 to 2016, so using the model for 2026 also assumes that the estimated relationship continues beyond the observed years.
